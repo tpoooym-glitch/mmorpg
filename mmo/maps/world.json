@@ -1,0 +1,7 @@
+{
+  "name":"Arelia World",
+  "tileSize":32,
+  "width":3600,
+  "height":2400,
+  "zones":["Arelia Town","Emerald Meadow","Murk Swamp","Golden Desert","Ancient Ruins","Frostpeak","Shadow Dungeon","Ember Crater","Royal Castle","Dragon Valley","Moonlight Forest","Kingdom Frontier"]
+}
