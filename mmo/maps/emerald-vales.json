@@ -1,0 +1,68 @@
+{
+  "id": "emerald-vales",
+  "name": "Emerald Vales",
+  "version": 1,
+  "tileSize": 32,
+  "width": 3200,
+  "height": 2400,
+  "spawn": { "x": 1600, "y": 1180 },
+  "terrain": {
+    "base": "grass",
+    "regions": [
+      { "id": "north-forest", "type": "forest", "x": 0, "y": 0, "w": 1100, "h": 760 },
+      { "id": "central-meadow", "type": "grass", "x": 800, "y": 520, "w": 1500, "h": 1100 },
+      { "id": "west-meadow", "type": "grass", "x": 0, "y": 760, "w": 950, "h": 950 },
+      { "id": "east-forest", "type": "forest", "x": 2250, "y": 500, "w": 950, "h": 1250 },
+      { "id": "south-meadow", "type": "grass", "x": 450, "y": 1550, "w": 2350, "h": 850 },
+      { "id": "southwest-wetland", "type": "swamp", "x": 0, "y": 1650, "w": 650, "h": 750 }
+    ]
+  },
+  "water": [
+    { "id": "emerald-river", "type": "river", "points": [[120,430],[520,560],[820,760],[1120,940],[1460,1040],[1780,1220],[2070,1460],[2380,1660],[2790,1830],[3180,1950]] },
+    { "id": "south-pond", "type": "pond", "x": 260, "y": 1940, "w": 360, "h": 250 },
+    { "id": "hidden-pond", "type": "pond", "x": 2420, "y": 820, "w": 300, "h": 210 }
+  ],
+  "roads": [
+    { "id": "main-road", "points": [[1600,1180],[1500,950],[1350,720],[1160,520]] },
+    { "id": "west-road", "points": [[1600,1180],[1280,1280],[930,1330],[600,1320],[280,1160]] },
+    { "id": "south-road", "points": [[1600,1180],[1640,1450],[1600,1720],[1510,2040],[1460,2320]] },
+    { "id": "east-road", "points": [[1600,1180],[1900,1150],[2180,1120],[2490,1180],[2850,1300]] }
+  ],
+  "bridges": [
+    { "id": "central-bridge", "x": 1510, "y": 1120, "w": 190, "h": 70 },
+    { "id": "east-bridge", "x": 2300, "y": 1570, "w": 180, "h": 70 }
+  ],
+  "structures": [
+    { "id": "vale-camp", "type": "village", "x": 1500, "y": 1030, "w": 260, "h": 180 },
+    { "id": "west-hut", "type": "house", "x": 520, "y": 1180, "w": 130, "h": 100 },
+    { "id": "east-hut", "type": "house", "x": 2670, "y": 1120, "w": 130, "h": 100 }
+  ],
+  "resources": [
+    { "id": "herb-patch-1", "type": "herb", "x": 980, "y": 870 },
+    { "id": "herb-patch-2", "type": "herb", "x": 2040, "y": 930 },
+    { "id": "ore-node-1", "type": "ore", "x": 720, "y": 520 },
+    { "id": "ore-node-2", "type": "ore", "x": 2790, "y": 650 }
+  ],
+  "landmarks": [
+    { "id": "vale-entrance", "type": "entrance", "x": 1600, "y": 2320, "target": "world-frontier" },
+    { "id": "forest-entrance", "type": "entrance", "x": 1160, "y": 520, "target": "whispering-woods" },
+    { "id": "east-entrance", "type": "entrance", "x": 2850, "y": 1300, "target": "riverbend-settlement" }
+  ],
+  "collision": {
+    "default": "walkable",
+    "blocked": ["tree", "large_rock", "house", "village", "mountain_edge"],
+    "water": "slow",
+    "deepWater": "danger",
+    "bridge": "walkable",
+    "road": "walkable"
+  },
+  "movement": {
+    "grassMultiplier": 1.0,
+    "forestMultiplier": 0.85,
+    "swampMultiplier": 0.65,
+    "waterMultiplier": 0.45,
+    "roadMultiplier": 1.15,
+    "bridgeMultiplier": 1.0
+  },
+  "recommendedLevel": { "min": 1, "max": 5 }
+}
