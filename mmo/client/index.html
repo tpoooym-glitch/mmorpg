@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Arelia Online</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div id="app">
+  <header><b>ARELIA ONLINE</b><span id="connection">● Offline</span></header>
+  <main>
+    <canvas id="game" width="1100" height="680"></canvas>
+    <aside id="hud">
+      <div id="character">Adventurer · Warrior · Lv.1</div>
+      <div>HP <span id="hp">100/100</span></div>
+      <div class="bar"><i id="hpbar"></i></div>
+      <div>MP <span id="mp">50/50</span></div>
+      <div class="bar"><i id="mpbar"></i></div>
+      <div>Gold <span id="gold">100</span> · EXP <span id="xp">0/100</span></div>
+    </aside>
+    <div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1-3 สกิล · E โต้ตอบ · Q เควส · I กระเป๋า</div>
+  </main>
+</div>
+<script type="module" src="js/main.js"></script>
+</body>
+</html>
