@@ -1,7 +1,26 @@
 {
-  "name":"Arelia World",
-  "tileSize":32,
-  "width":3600,
-  "height":2400,
-  "zones":["Arelia Town","Emerald Meadow","Murk Swamp","Golden Desert","Ancient Ruins","Frostpeak","Shadow Dungeon","Ember Crater","Royal Castle","Dragon Valley","Moonlight Forest","Kingdom Frontier"]
+  "name": "Arelia World",
+  "version": 2,
+  "tileSize": 32,
+  "firstPlayableZone": "emerald-vales",
+  "zones": [
+    {
+      "id": "emerald-vales",
+      "name": "Emerald Vales",
+      "map": "emerald-vales.json",
+      "status": "playable"
+    },
+    { "id": "arelia-town", "name": "Arelia Town", "status": "planned" },
+    { "id": "whispering-woods", "name": "Whispering Woods", "status": "planned" },
+    { "id": "pinehaven-village", "name": "Pinehaven Village", "status": "planned" },
+    { "id": "murk-swamp", "name": "Murk Swamp", "status": "planned" },
+    { "id": "golden-desert", "name": "Golden Desert", "status": "planned" },
+    { "id": "frostpeak", "name": "Frostpeak Mountains", "status": "planned" },
+    { "id": "shadow-dungeon", "name": "Shadow Dungeon", "status": "planned" },
+    { "id": "ember-crater", "name": "Ember Crater", "status": "planned" },
+    { "id": "royal-castle", "name": "Royal Castle", "status": "planned" },
+    { "id": "dragon-valley", "name": "Dragon Valley", "status": "planned" },
+    { "id": "moonlight-forest", "name": "Moonlight Forest", "status": "planned" },
+    { "id": "kingdom-frontier", "name": "Kingdom Frontier", "status": "planned" }
+  ]
 }
