@@ -1,0 +1,9 @@
+{
+  "maxActive":5,
+  "types":["hunt","explore","collect"],
+  "starterQuests":[
+    {"id":"goblin-hunt","title":"Goblin Hunt","target":"goblin","amount":5,"gold":80,"xp":100},
+    {"id":"wolf-patrol","title":"Wolf Patrol","target":"wolf","amount":5,"gold":95,"xp":120},
+    {"id":"slime-trouble","title":"Slime Trouble","target":"slime","amount":7,"gold":110,"xp":140}
+  ]
+}
