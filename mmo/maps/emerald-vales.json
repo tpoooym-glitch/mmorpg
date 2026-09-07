@@ -1,11 +1,11 @@
 {
   "id": "emerald-vales",
   "name": "Emerald Vales",
-  "version": 1,
+  "version": 2,
   "tileSize": 32,
   "width": 3200,
   "height": 2400,
-  "spawn": { "x": 1600, "y": 1180 },
+  "spawn": { "x": 1600, "y": 1250 },
   "terrain": {
     "base": "grass",
     "regions": [
@@ -23,19 +23,23 @@
     { "id": "hidden-pond", "type": "pond", "x": 2420, "y": 820, "w": 300, "h": 210 }
   ],
   "roads": [
-    { "id": "main-road", "points": [[1600,1180],[1500,950],[1350,720],[1160,520]] },
-    { "id": "west-road", "points": [[1600,1180],[1280,1280],[930,1330],[600,1320],[280,1160]] },
-    { "id": "south-road", "points": [[1600,1180],[1640,1450],[1600,1720],[1510,2040],[1460,2320]] },
-    { "id": "east-road", "points": [[1600,1180],[1900,1150],[2180,1120],[2490,1180],[2850,1300]] }
+    { "id": "main-road", "points": [[1600,1250],[1500,950],[1350,720],[1160,520]] },
+    { "id": "west-road", "points": [[1600,1250],[1280,1280],[930,1330],[600,1320],[280,1160]] },
+    { "id": "south-road", "points": [[1600,1250],[1640,1450],[1600,1720],[1510,2040],[1460,2320]] },
+    { "id": "east-road", "points": [[1600,1250],[1900,1150],[2180,1120],[2490,1180],[2850,1300]]
+    }
   ],
   "bridges": [
     { "id": "central-bridge", "x": 1510, "y": 1120, "w": 190, "h": 70 },
     { "id": "east-bridge", "x": 2300, "y": 1570, "w": 180, "h": 70 }
   ],
   "structures": [
-    { "id": "vale-camp", "type": "village", "x": 1500, "y": 1030, "w": 260, "h": 180 },
-    { "id": "west-hut", "type": "house", "x": 520, "y": 1180, "w": 130, "h": 100 },
-    { "id": "east-hut", "type": "house", "x": 2670, "y": 1120, "w": 130, "h": 100 }
+    { "id": "vale-house-1", "type": "house", "sprite": "house", "x": 1450, "y": 1030, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
+    { "id": "vale-house-2", "type": "house", "sprite": "house", "x": 1660, "y": 1035, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
+    { "id": "vale-house-3", "type": "house", "sprite": "house", "x": 1450, "y": 1260, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
+    { "id": "vale-house-4", "type": "house", "sprite": "house", "x": 1660, "y": 1265, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
+    { "id": "west-hut", "type": "house", "sprite": "house", "x": 520, "y": 1180, "w": 130, "h": 100, "spriteW": 135, "spriteH": 155 },
+    { "id": "east-hut", "type": "house", "sprite": "house", "x": 2670, "y": 1120, "w": 130, "h": 100, "spriteW": 135, "spriteH": 155 }
   ],
   "resources": [
     { "id": "herb-patch-1", "type": "herb", "x": 980, "y": 870 },
