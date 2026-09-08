@@ -1,0 +1,1 @@
+export function createMonsterModel(data={}){return{id:data.id??crypto.randomUUID(),templateId:data.templateId??'slime',x:data.x??0,y:data.y??0,hp:data.hp??10,maxHp:data.maxHp??10,state:'idle',targetId:null,spawnPoint:{x:data.x??0,y:data.y??0}}}
