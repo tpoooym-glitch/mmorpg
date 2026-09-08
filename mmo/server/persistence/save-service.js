@@ -1,0 +1,1 @@
+export function createSaveService(){const memory=new Map();return{save(playerId,data){memory.set(playerId,structuredClone(data));return true},load(playerId){return structuredClone(memory.get(playerId)??null)},remove(playerId){memory.delete(playerId)}}}
