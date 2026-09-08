@@ -1,0 +1,1 @@
+export function createCombatService(){return{attack(attacker,target,damage){if(!attacker||!target||target.hp<=0)return false;target.hp=Math.max(0,target.hp-damage);if(target.hp===0)target.alive=false;return true}}}
