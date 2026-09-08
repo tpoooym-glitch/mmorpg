@@ -2,7 +2,7 @@ const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),keys={}
 const player={x:1600,y:1180,r:15,speed:180,hp:100,maxHp:100,mp:50,maxMp:50,gold:100,xp:0,level:1,name:'Adventurer',class:'Warrior'};
 let zone=null,mobs=[],decor=[],cam={x:0,y:0},error='';
 const img={oak:new Image(),pine:new Image(),rock:new Image(),house:new Image()};
-img.oak.src='assets/forest/oak-large.webp';img.pine.src='assets/forest/pine-large.webp';img.rock.src='assets/forest/rock-large.webp';img.house.src='assets/buildings/house-red.webp';
+img.oak.src='assets/forest/oak-large.svg';img.pine.src='assets/forest/pine-large.svg';img.rock.src='assets/forest/rock-large.svg';img.house.src='assets/buildings/house-red.svg';
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b,c,d)=>Math.hypot(a-c,b-d);
 const inRect=(x,y,r)=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;
 function nearLine(x,y,p,r){for(let i=1;i<p.length;i++){const[a,b]=p[i-1],[c,d]=p[i],abx=c-a,aby=d-b,t=clamp(((x-a)*abx+(y-b)*aby)/(abx*abx+aby*aby||1),0,1);if(dist(x,y,a+t*abx,b+t*aby)<=r)return true}return false}
