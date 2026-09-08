@@ -1,0 +1,1 @@
+export function createMessageRouter(){const handlers=new Map();return{on(type,handler){handlers.set(type,handler)},handle(connection,message,context){const handler=handlers.get(message?.type);if(!handler)return false;handler(connection,message,context);return true}}}
