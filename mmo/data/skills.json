@@ -1,0 +1,8 @@
+{
+  "slash":{"name":"Slash","power":25,"mpCost":0,"cooldownMs":700},
+  "guard":{"name":"Guard","power":0,"mpCost":5,"cooldownMs":3000},
+  "fireball":{"name":"Fireball","power":35,"mpCost":15,"cooldownMs":1200,"criticalChance":0.1},
+  "heal":{"name":"Heal","power":30,"mpCost":20,"cooldownMs":5000},
+  "quick-strike":{"name":"Quick Strike","power":22,"mpCost":5,"cooldownMs":500},
+  "evade":{"name":"Evade","power":0,"mpCost":10,"cooldownMs":4000}
+}
