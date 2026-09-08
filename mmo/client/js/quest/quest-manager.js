@@ -1,1 +1,69 @@
-export function createQuestManager(state){return{active:state.player.quests??[],max:5,accept(quest){if(this.active.length>=this.max||this.active.some(q=>q.id===quest.id))return false;this.active.push({...quest,status:'active',progress:{}});state.player.quests=this.active;return true},update(objectiveId,amount=1){for(const q of this.active)for(const o of q.objectives??[])if(o.id===objectiveId)o.current=Math.min(o.required,(o.current??0)+amount)},complete(id){const q=this.active.find(x=>x.id===id);if(!q)return false;const done=(q.objectives??[]).every(o=>(o.current??0)>=o.required);if(!done)return false;q.status='complete';return true},turnIn(id){const i=this.active.findIndex(q=>q.id===id&&q.status==='complete');if(i<0)return null;const q=this.active.splice(i,1)[0];state.player.quests=this.active;return q}}}
+/**
+ * Client-Side Quest Manager
+ * - Track active quests
+ * - Display progress
+ * - Handle quest completion
+ */
+
+import { on, emit } from '../core/event-bus.js';
+
+const quests = new Map(); // { questId -> questData }
+
+export function initQuestManager() {
+  on('quest_received', handleQuestReceived);
+  on('quest_progress', handleQuestProgress);
+  on('quest_completed', handleQuestCompleted);
+  console.log('[QUEST] Initialized');
+}
+
+function handleQuestReceived(data) {
+  const quest = {
+    id: data.questId,
+    name: data.name,
+    description: data.description,
+    target: data.target,
+    progress: 0,
+    completed: false,
+    rewards: data.rewards
+  };
+  quests.set(data.questId, quest);
+  emit('quests_updated', getActiveQuests());
+}
+
+function handleQuestProgress(data) {
+  const quest = quests.get(data.questId);
+  if (quest) {
+    quest.progress = data.progress;
+    if (quest.progress >= quest.target) {
+      quest.completed = true;
+    }
+    emit('quests_updated', getActiveQuests());
+  }
+}
+
+function handleQuestCompleted(data) {
+  const quest = quests.get(data.questId);
+  if (quest) {
+    quest.completed = true;
+    quest.rewarded = true;
+    emit('quest_reward', {
+      questId: data.questId,
+      xp: data.rewards?.xp || 0,
+      gold: data.rewards?.gold || 0,
+      items: data.rewards?.items || []
+    });
+    emit('quests_updated', getActiveQuests());
+  }
+}
+
+export function getActiveQuests() {
+  return Array.from(quests.values()).filter(q => !q.completed);
+}
+
+export function getCompletedQuests() {
+  return Array.from(quests.values()).filter(q => q.completed);
+}
+
+export function getQuestProgress(questId) {
+  return quests.get(questId) || null;
+}

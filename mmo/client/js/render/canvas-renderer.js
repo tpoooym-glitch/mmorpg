@@ -1,5 +1,234 @@
-import {clamp,dist} from '../core/utils.js';
-function line(ctx,points,width,stroke,highlight){ctx.lineCap='round';ctx.lineJoin='round';ctx.strokeStyle=stroke;ctx.lineWidth=width;ctx.beginPath();points.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();if(highlight){ctx.strokeStyle=highlight;ctx.lineWidth=3;ctx.stroke()}}
-function drawDecor(ctx,state,assets){for(const o of state.decor){const i=assets[o.type],x=o.x-state.cam.x,y=o.y-state.cam.y;if(!i.complete||!i.naturalWidth||x<-o.w||y<-o.h||x>ctx.canvas.width+o.w||y>ctx.canvas.height+o.h)continue;ctx.drawImage(i,x-o.w/2,y-o.h,o.w,o.h)}}
-function drawStructures(ctx,state,assets){for(const s of state.zone.structures||[]){const i=assets[s.sprite||'house'];if(!i.complete||!i.naturalWidth)continue;const sw=s.spriteW||150,sh=s.spriteH||165,x=s.x+s.w/2-sw/2-state.cam.x,y=s.y+s.h-sh+10-state.cam.y;if(x>-sw&&y>-sh&&x<ctx.canvas.width+sw&&y<ctx.canvas.height+sh)ctx.drawImage(i,x,y,sw,sh)}}
-export function drawScene(ctx,state,assets){const z=state.zone,p=state.player;state.cam.x=clamp(p.x-ctx.canvas.width/2,0,Math.max(0,z.width-ctx.canvas.width));state.cam.y=clamp(p.y-ctx.canvas.height/2,0,Math.max(0,z.height-ctx.canvas.height));ctx.fillStyle='#79a84a';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);const colors={grass:'#79a84a',forest:'#3f713e',swamp:'#607b52',desert:'#c5a65c',snow:'#d9e5df',volcano:'#754d3f',mountain:'#65705e'};for(const r of z.terrain?.regions||[]){ctx.fillStyle=colors[r.type]||colors.grass;ctx.fillRect(r.x-state.cam.x,r.y-state.cam.y,r.w,r.h)}for(const w of z.water||[]){if(w.type==='river')line(ctx,w.points.map(p=>[p[0]-state.cam.x,p[1]-state.cam.y]),94,'#356b75','#5da9b7');else{ctx.fillStyle='#5da9b7';ctx.beginPath();ctx.ellipse(w.x+w.w/2-state.cam.x,w.y+w.h/2-state.cam.y,w.w/2,w.h/2,0,0,Math.PI*2);ctx.fill()}}for(const r of z.roads||[])line(ctx,r.points.map(p=>[p[0]-state.cam.x,p[1]-state.cam.y]),64,'#b88752','#d6a66c');for(const b of z.bridges||[]){ctx.fillStyle='#795548';ctx.fillRect(b.x-state.cam.x,b.y-state.cam.y,b.w,b.h)}drawDecor(ctx,state,assets);drawStructures(ctx,state,assets);for(const m of state.mobs){if(m.hp<=0)continue;const x=m.x-state.cam.x,y=m.y-state.cam.y;ctx.fillStyle='#86b84d';ctx.beginPath();ctx.arc(x,y,m.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef4444';ctx.fillRect(x-15,y-25,30*m.hp/m.maxHp,4)}const px=p.x-state.cam.x,py=p.y-state.cam.y;ctx.fillStyle='#f4c2a1';ctx.beginPath();ctx.arc(px,py,p.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.stroke();ctx.fillStyle='#fff';ctx.font='12px system-ui';ctx.fillText(p.name,px-35,py-24);ctx.font='bold 18px system-ui';ctx.fillText(z.name,18,28);if(state.error){ctx.font='12px system-ui';ctx.fillText(state.error,18,48)}}
+/**
+ * Updated Canvas Renderer
+ * - Render players, mobs, terrain, buildings
+ * - Use fallback shapes if sprites missing
+ * - Render damage numbers
+ * - Camera follow player
+ */
+
+import { getSprite, hasSprite, FALLBACK_SHAPES } from './asset-loader.js';
+import { state } from '../core/state.js';
+import { getRemotePlayers } from '../multiplayer/multiplayer-client.js';
+
+const damageNumbers = [];
+const MAX_DAMAGE_DURATION = 1000; // ms
+
+export function drawScene(ctx, gameState, assets) {
+  const canvas = ctx.canvas;
+  const width = canvas.width;
+  const height = canvas.height;
+
+  // Clear canvas
+  ctx.fillStyle = '#0b1020';
+  ctx.fillRect(0, 0, width, height);
+
+  // Update camera (follow player)
+  gameState.cam.x = gameState.player.x - width / 2;
+  gameState.cam.y = gameState.player.y - height / 2;
+
+  // ==================== Draw Terrain ====================
+  drawTerrain(ctx, gameState);
+
+  // ==================== Draw Buildings/Decor ====================
+  if (gameState.decor) {
+    for (const decor of gameState.decor) {
+      drawEntity(ctx, gameState, decor);
+    }
+  }
+
+  // ==================== Draw Mobs ====================
+  if (gameState.mobs) {
+    for (const mob of gameState.mobs) {
+      if (mob.alive) {
+        drawEntity(ctx, gameState, mob);
+      }
+    }
+  }
+
+  // ==================== Draw Other Players ====================
+  const remotePlayers = getRemotePlayers();
+  for (const player of remotePlayers) {
+    if (player.alive) {
+      drawEntity(ctx, gameState, player, player.class);
+    }
+  }
+
+  // ==================== Draw Player ====================
+  drawEntity(ctx, gameState, gameState.player, gameState.player.class);
+
+  // ==================== Draw Damage Numbers ====================
+  drawDamageNumbers(ctx, gameState);
+
+  // ==================== Draw HUD ====================
+  drawHUD(ctx, gameState, width, height);
+}
+
+function drawTerrain(ctx, gameState) {
+  if (!gameState.zone) return;
+
+  // Draw background (simple fill)
+  ctx.fillStyle = '#1a2844';
+  ctx.fillRect(
+    -gameState.cam.x,
+    -gameState.cam.y,
+    2200,
+    1400
+  );
+
+  // Draw terrain zones if available
+  if (gameState.zone.terrain) {
+    for (const tile of gameState.zone.terrain) {
+      const x = tile.x - gameState.cam.x;
+      const y = tile.y - gameState.cam.y;
+
+      ctx.fillStyle = getTileColor(tile.type);
+      ctx.fillRect(x, y, tile.width, tile.height);
+    }
+  }
+}
+
+function getTileColor(terrainType) {
+  const colors = {
+    grass: '#2a7a3a',
+    forest: '#1a5a2a',
+    water: '#1a5a9a',
+    sand: '#c9a961',
+    rock: '#6a6a6a'
+  };
+  return colors[terrainType] || '#3a4a5a';
+}
+
+function drawEntity(ctx, gameState, entity, className) {
+  const x = entity.x - gameState.cam.x;
+  const y = entity.y - gameState.cam.y;
+  const r = entity.r || 16;
+
+  // Determine sprite name
+  let spriteName = entity.type === 'player' ? className : entity.type;
+
+  // Try to use sprite, fallback to shape
+  if (hasSprite(spriteName)) {
+    const sprite = getSprite(spriteName);
+    if (sprite) {
+      ctx.drawImage(sprite, x - r, y - r, r * 2, r * 2);
+    }
+  } else {
+    drawFallbackShape(ctx, spriteName, x, y, r);
+  }
+
+  // Draw HP bar above entity
+  if (entity.hp !== undefined && entity.maxHp !== undefined) {
+    drawHPBar(ctx, x, y - r - 10, r * 2, 4, entity.hp, entity.maxHp);
+  }
+
+  // Draw name label
+  if (entity.name) {
+    ctx.fillStyle = '#eef2ff';
+    ctx.font = 'bold 10px system-ui';
+    ctx.textAlign = 'center';
+    ctx.fillText(entity.name, x, y + r + 15);
+  }
+}
+
+function drawFallbackShape(ctx, name, x, y, size) {
+  const shape = FALLBACK_SHAPES[name] || FALLBACK_SHAPES.player;
+
+  ctx.fillStyle = shape.color || '#0088ff';
+  ctx.globalAlpha = 0.8;
+
+  switch (shape.type) {
+    case 'circle':
+      ctx.beginPath();
+      ctx.arc(x, y, size, 0, Math.PI * 2);
+      ctx.fill();
+      break;
+    case 'triangle':
+      ctx.beginPath();
+      ctx.moveTo(x, y - size);
+      ctx.lineTo(x + size, y + size);
+      ctx.lineTo(x - size, y + size);
+      ctx.fill();
+      break;
+    case 'rect':
+      ctx.fillRect(x - shape.width / 2, y - shape.height / 2, shape.width, shape.height);
+      break;
+    case 'square':
+      const halfSize = size / 2;
+      ctx.fillRect(x - halfSize, y - halfSize, size, size);
+      break;
+  }
+
+  ctx.globalAlpha = 1;
+}
+
+function drawHPBar(ctx, x, y, width, height, hp, maxHp) {
+  const hpPercent = Math.max(0, hp / maxHp);
+
+  // Background (dark)
+  ctx.fillStyle = '#333333';
+  ctx.fillRect(x - width / 2, y, width, height);
+
+  // HP bar (green/red)
+  const color = hpPercent > 0.5 ? '#00ff00' : hpPercent > 0.25 ? '#ffff00' : '#ff0000';
+  ctx.fillStyle = color;
+  ctx.fillRect(x - width / 2, y, width * hpPercent, height);
+
+  // Border
+  ctx.strokeStyle = '#ffffff';
+  ctx.lineWidth = 1;
+  ctx.strokeRect(x - width / 2, y, width, height);
+}
+
+export function addDamageNumber(targetId, damage, isCrit, x, y) {
+  damageNumbers.push({
+    targetId,
+    damage,
+    isCrit,
+    x,
+    y,
+    startTime: Date.now(),
+    offsetY: 0
+  });
+}
+
+function drawDamageNumbers(ctx, gameState) {
+  const now = Date.now();
+  const stillActive = [];
+
+  for (const dmg of damageNumbers) {
+    const elapsed = now - dmg.startTime;
+    if (elapsed > MAX_DAMAGE_DURATION) continue; // Remove old ones
+
+    const progress = elapsed / MAX_DAMAGE_DURATION;
+    const opacity = 1 - progress;
+    const offsetY = progress * 30; // Float upward
+
+    const x = dmg.x - gameState.cam.x;
+    const y = dmg.y - gameState.cam.y - offsetY;
+
+    ctx.globalAlpha = opacity;
+    ctx.fillStyle = dmg.isCrit ? '#ffff00' : '#ff0000';
+    ctx.font = `bold ${dmg.isCrit ? 18 : 14}px system-ui`;
+    ctx.textAlign = 'center';
+    ctx.fillText(dmg.damage, x, y);
+    ctx.globalAlpha = 1;
+
+    stillActive.push(dmg);
+  }
+
+  damageNumbers.length = 0;
+  damageNumbers.push(...stillActive);
+}
+
+function drawHUD(ctx, gameState, width, height) {
+  ctx.globalAlpha = 1;
+  ctx.fillStyle = '#eef2ff';
+  ctx.font = '12px system-ui';
+
+  // Player stats (top-left)
+  const y = 20;
+  ctx.fillText(`HP: ${gameState.player.hp}/${gameState.player.maxHp}`, 10, y);
+  ctx.fillText(`MP: ${gameState.player.mp}/${gameState.player.maxMp}`, 10, y + 15);
+  ctx.fillText(`Gold: ${gameState.player.gold}`, 10, y + 30);
+  ctx.fillText(`Lv. ${gameState.player.level}`, 10, y + 45);
+}
