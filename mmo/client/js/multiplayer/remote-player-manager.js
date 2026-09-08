@@ -1,0 +1,1 @@
+export function createRemotePlayerManager(){const players=new Map();return{upsert(data){players.set(data.id,{...players.get(data.id),...data,targetX:data.x,targetY:data.y})},remove(id){players.delete(id)},update(alpha=.15){for(const p of players.values()){p.x+=(p.targetX-p.x)*alpha;p.y+=(p.targetY-p.y)*alpha}},all(){return [...players.values()]}}}
