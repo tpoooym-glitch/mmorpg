@@ -1,0 +1,1 @@
+export function createPlayerRegistry(){const players=new Map();return{add(player){players.set(player.id,player)},get(id){return players.get(id)},remove(id){players.delete(id)},all(){return [...players.values()]},size(){return players.size}}}
