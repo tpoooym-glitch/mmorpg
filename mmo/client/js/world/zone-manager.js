@@ -1,0 +1,1 @@
+export function createZoneManager(){return{current:null,connections:[],set(zone){this.current=zone;this.connections=zone.connections??[]},findExit(x,y){return this.connections.find(c=>x>=c.x&&y>=c.y&&x<=c.x+c.w&&y<=c.y+c.h)??null}}}
