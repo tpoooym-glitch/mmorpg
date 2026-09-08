@@ -1,0 +1,2 @@
+const sources={oak:'assets/environment/oak-large.svg',pine:'assets/environment/pine-large.svg',rock:'assets/environment/rock-large.svg',house:'assets/buildings/house-red.svg'};
+export function loadAssets(){const assets={};const pending=Object.entries(sources).map(([name,src])=>new Promise(resolve=>{const image=new Image();image.onload=resolve;image.onerror=resolve;image.src=src;assets[name]=image}));return{assets,ready:Promise.all(pending)}}

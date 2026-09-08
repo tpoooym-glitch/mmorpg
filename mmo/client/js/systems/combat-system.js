@@ -1,0 +1,2 @@
+import {dist} from '../core/utils.js';
+export function attack(state){for(const m of state.mobs)if(m.hp>0&&dist(m.x,m.y,state.player.x,state.player.y)<78){m.hp-=20;if(m.hp<=0){state.player.xp+=20;state.player.gold+=5;if(state.player.xp>=100){state.player.xp-=100;state.player.level++;state.player.maxHp+=10;state.player.hp=state.player.maxHp}}}}

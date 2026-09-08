@@ -1,20 +1,17 @@
-const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d'),keys={};
-const player={x:1600,y:1180,r:15,speed:180,hp:100,maxHp:100,mp:50,maxMp:50,gold:100,xp:0,level:1,name:'Adventurer',class:'Warrior'};
-let zone=null,mobs=[],cam={x:0,y:0},error='';
-const img={oak:new Image(),pine:new Image(),rock:new Image()};
-img.oak.src='assets/forest/oak-large.svg';img.pine.src='assets/forest/pine-large.svg';img.rock.src='assets/forest/rock-large.svg';img.house.src='assets/buildings/house-red.svg';
-const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b,c,d)=>Math.hypot(a-c,b-d);
-const inRect=(x,y,r)=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;
-function nearLine(x,y,p,r){for(let i=1;i<p.length;i++){const[a,b]=p[i-1],[c,d]=p[i],abx=c-a,aby=d-b,t=clamp(((x-a)*abx+(y-b)*aby)/(abx*abx+aby*aby||1),0,1);if(dist(x,y,a+t*abx,b+t*aby)<=r)return true}return false}
-function terrain(x,y){if(!zone)return'grass';if((zone.bridges||[]).some(b=>inRect(x,y,b)))return'bridge';if((zone.water||[]).some(w=>w.type==='pond'&&inRect(x,y,w)))return'water';if((zone.water||[]).some(w=>w.type==='river'&&nearLine(x,y,w.points,42)))return'water';if((zone.roads||[]).some(r=>nearLine(x,y,r.points,34)))return'road';for(let i=(zone.terrain?.regions||[]).length-1;i>=0;i--){const r=zone.terrain.regions[i];if(inRect(x,y,r))return r.type}return zone.terrain?.base||'grass'}
-function blocked(x,y){if(!zone||x<player.r||y<player.r||x>zone.width-player.r||y>zone.height-player.r)return true;if((zone.bridges||[]).some(b=>inRect(x,y,b)))return false;return(zone.structures||[]).some(s=>inRect(x,y,{x:s.x-16,y:s.y-16,w:s.w+32,h:s.h+32}))}
-function speed(){const t=terrain(player.x,player.y);return player.speed*(zone?.movement?.[`${t}Multiplier`]??1)}
-function move(dt){let x=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);if(x&&y){x*=.707;y*=.707}const s=speed(),nx=player.x+x*s*dt,ny=player.y+y*s*dt;if(!blocked(nx,player.y))player.x=nx;if(!blocked(player.x,ny))player.y=ny}
-function attack(){for(const m of mobs)if(m.hp>0&&dist(m.x,m.y,player.x,player.y)<78){m.hp-=20;if(m.hp<=0){player.xp+=20;player.gold+=5;if(player.xp>=100){player.xp-=100;player.level++;player.maxHp+=10;player.hp=player.maxHp}}}}
-addEventListener('keydown',e=>{keys[e.key.toLowerCase()]=true;if(e.key===' '){e.preventDefault();attack()}});addEventListener('keyup',e=>keys[e.key.toLowerCase()]=false);
-async function load(){try{const r=await fetch('../maps/emerald-vales.json');if(!r.ok)throw Error(`HTTP ${r.status}`);zone=await r.json();player.x=zone.spawn.x;player.y=zone.spawn.y}catch(e){error=e.message;zone={name:'Emerald Vales',width:3200,height:2400,spawn:{x:1600,y:1180},terrain:{base:'grass',regions:[]},water:[],roads:[],bridges:[],structures:[],resources:[],movement:{grassMultiplier:1,forestMultiplier:.85,swampMultiplier:.65,waterMultiplier:.45,roadMultiplier:1.15,bridgeMultiplier:1}}}mobs=[[420,520],[680,840],[900,520],[1120,1450],[1380,1560],[1900,760],[2140,1380],[2480,720],[2720,1460],[2900,1720]].map((p,i)=>({x:p[0],y:p[1],r:16,hp:40,maxHp:40,type:i%2?'Forest Boar':'Slime'}))}
-function line(points,w,a,b){ctx.beginPath();points.forEach((p,i)=>{const x=p[0]-cam.x,y=p[1]-cam.y;i?ctx.lineTo(x,y):ctx.moveTo(x,y)});ctx.lineCap='round';ctx.lineJoin='round';ctx.lineWidth=w;ctx.strokeStyle=a;ctx.stroke();ctx.lineWidth=w-14;ctx.strokeStyle=b;ctx.stroke()}
-function forest(){const a=[[300,300,'oak',130,150],[720,500,'pine',95,145],[1080,390,'oak',115,135],[1260,1780,'pine',90,140],[1550,720,'oak',120,145],[1840,470,'pine',100,150],[2260,560,'oak',125,145],[2600,850,'pine',95,145],[560,1450,'oak',120,145],[940,1680,'pine',95,145],[1980,1800,'oak',120,145],[2760,1920,'pine',100,150],[360,900,'rock',48,42],[820,1200,'rock',42,38],[1740,420,'rock',45,40],[2380,1280,'rock',48,42]];for(const[x,y,t,w,h]of a){if(terrain(x,y)!=='forest')continue;const i=img[t],sx=x-cam.x,sy=y-cam.y;if(i.complete&&i.naturalWidth&&sx>-w&&sy>-h&&sx<canvas.width+w&&sy<canvas.height+h)ctx.drawImage(i,sx-w/2,sy-h,w,h)}}
-function draw(){if(!zone)return;cam.x=clamp(player.x-canvas.width/2,0,Math.max(0,zone.width-canvas.width));cam.y=clamp(player.y-canvas.height/2,0,Math.max(0,zone.height-canvas.height));ctx.fillStyle='#79a84a';ctx.fillRect(0,0,canvas.width,canvas.height);const c={grass:'#79a84a',forest:'#3f713e',swamp:'#607b52',desert:'#c5a65c',snow:'#d9e5df',volcano:'#754d3f',mountain:'#65705e'};for(const r of zone.terrain?.regions||[]){ctx.fillStyle=c[r.type]||c.grass;ctx.fillRect(r.x-cam.x,r.y-cam.y,r.w,r.h)}for(const w of zone.water||[]){if(w.type==='river')line(w.points,94,'#356b75','#5da9b7');else{ctx.fillStyle='#5da9b7';ctx.beginPath();ctx.ellipse(w.x+w.w/2-cam.x,w.y+w.h/2-cam.y,w.w/2,w.h/2,0,0,Math.PI*2);ctx.fill()}}for(const r of zone.roads||[])line(r.points,64,'#b88752','#d6a66c');for(const b of zone.bridges||[]){ctx.fillStyle='#795548';ctx.fillRect(b.x-cam.x,b.y-cam.y,b.w,b.h)}forest();for(const s of zone.structures||[]){ctx.fillStyle='#8b5a3c';ctx.fillRect(s.x-cam.x,s.y-cam.y,s.w,s.h)}for(const m of mobs){if(m.hp<=0)continue;const x=m.x-cam.x,y=m.y-cam.y;ctx.fillStyle='#86b84d';ctx.beginPath();ctx.arc(x,y,m.r,0,Math.PI*2);ctx.fill();ctx.fillStyle='#ef4444';ctx.fillRect(x-15,y-25,30*m.hp/m.maxHp,4)}const px=player.x-cam.x,py=player.y-cam.y;ctx.fillStyle='#f4c2a1';ctx.beginPath();ctx.arc(px,py,player.r,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#fff';ctx.stroke();ctx.fillStyle='#fff';ctx.font='12px system-ui';ctx.fillText(player.name,px-35,py-24);ctx.font='bold 18px system-ui';ctx.fillText(zone.name,18,28);if(error){ctx.font='12px system-ui';ctx.fillText(error,18,48)}}
-function ui(){document.querySelector('#character').textContent=`${player.name} · ${player.class} · Lv.${player.level}`;document.querySelector('#hp').textContent=`${Math.max(0,Math.round(player.hp))}/${player.maxHp}`;document.querySelector('#mp').textContent=`${player.mp}/${player.maxMp}`;document.querySelector('#gold').textContent=player.gold;document.querySelector('#xp').textContent=`${player.xp}/100`;document.querySelector('#hpbar').style.width=`${player.hp/player.maxHp*100}%`;document.querySelector('#mpbar').style.width=`${player.mp/player.maxMp*100}%`}
-let last=performance.now();function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;move(dt);draw();ui();requestAnimationFrame(loop)}load();requestAnimationFrame(loop);
+import {state} from './core/state.js';
+import {createInput} from './input/input-manager.js';
+import {loadZone} from './world/map-loader.js';
+import {generateDecor} from './world/decor-generator.js';
+import {createMobs} from './entities/mob-factory.js';
+import {move} from './systems/movement-system.js';
+import {attack} from './systems/combat-system.js';
+import {loadAssets} from './render/asset-loader.js';
+import {drawScene} from './render/canvas-renderer.js';
+import {updateHud} from './ui/hud.js';
+const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
+const input=createInput(()=>attack(state));
+const {assets,ready}=loadAssets();
+let last=performance.now();
+async function start(){const loaded=await loadZone();state.zone=loaded.zone;state.error=loaded.error;state.player.x=state.zone.spawn.x;state.player.y=state.zone.spawn.y;state.decor=generateDecor(state);state.mobs=createMobs();await ready;requestAnimationFrame(loop)}
+function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;move(state,input.keys,dt);drawScene(ctx,state,assets);updateHud(state);requestAnimationFrame(loop)}
+start();

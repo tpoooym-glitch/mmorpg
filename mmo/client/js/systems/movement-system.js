@@ -1,0 +1,2 @@
+import {speed,blocked} from '../world/terrain.js';
+export function move(state,keys,dt){let x=(keys.d||keys.arrowright?1:0)-(keys.a||keys.arrowleft?1:0),y=(keys.s||keys.arrowdown?1:0)-(keys.w||keys.arrowup?1:0);if(x&&y){x*=.707;y*=.707}const s=speed(state),nx=state.player.x+x*s*dt,ny=state.player.y+y*s*dt;if(!blocked(state,nx,state.player.y))state.player.x=nx;if(!blocked(state,state.player.x,ny))state.player.y=ny}
