@@ -1,0 +1,1 @@
+export function createInput(onAttack){const keys={};const down=e=>{keys[e.key.toLowerCase()]=true;if(e.key===' '){e.preventDefault();onAttack()}};const up=e=>{keys[e.key.toLowerCase()]=false};addEventListener('keydown',down);addEventListener('keyup',up);return{keys,destroy(){removeEventListener('keydown',down);removeEventListener('keyup',up)}}}

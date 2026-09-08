@@ -19,10 +19,10 @@ bridges:[{x:1510,y:1120,w:190,h:70},{x:2300,y:1570,w:180,h:70}],
 structures:[{x:1450,y:1030,w:150,h:110},{x:1660,y:1035,w:150,h:110},{x:1450,y:1260,w:150,h:110},{x:1660,y:1265,w:150,h:110},{x:520,y:1180,w:130,h:100},{x:2670,y:1120,w:130,h:100}],
 movement:{grassMultiplier:1,forestMultiplier:.85,swampMultiplier:.65,waterMultiplier:.45,roadMultiplier:1.15,bridgeMultiplier:1}};
 const img={oak:new Image(),pine:new Image(),rock:new Image(),house:new Image()};
-img.oak.src='https://raw.githubusercontent.com/tpoooym-glitch/mmorpg/main/mmo/client/assets/forest/oak-large.webp';
-img.pine.src='https://raw.githubusercontent.com/tpoooym-glitch/mmorpg/main/mmo/client/assets/forest/pine-large.webp';
-img.rock.src='https://raw.githubusercontent.com/tpoooym-glitch/mmorpg/main/mmo/client/assets/forest/rock-large.webp';
-img.house.src='https://raw.githubusercontent.com/tpoooym-glitch/mmorpg/main/mmo/client/assets/buildings/house-red.webp';
+img.oak.src='assets/environment/oak-large.svg';
+img.pine.src='assets/environment/pine-large.svg';
+img.rock.src='assets/environment/rock-large.svg';
+img.house.src='assets/buildings/house-red.svg';
 let decor=[],mobs=[],cam={x:0,y:0};
 const clamp=(v,a,b)=>Math.max(a,Math.min(b,v)),dist=(a,b,c,d)=>Math.hypot(a-c,b-d),inRect=(x,y,r)=>x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h;
 function nearLine(x,y,p,r){for(let i=1;i<p.length;i++){const[a,b]=p[i-1],[c,d]=p[i],abx=c-a,aby=d-b,t=clamp(((x-a)*abx+(y-b)*aby)/(abx*abx+aby*aby||1),0,1);if(dist(x,y,a+t*abx,b+t*aby)<=r)return true}return false}
