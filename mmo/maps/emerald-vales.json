@@ -1,56 +1,52 @@
 {
   "id": "emerald-vales",
   "name": "Emerald Vales",
-  "version": 2,
+  "version": 3,
   "tileSize": 32,
   "width": 3200,
   "height": 2400,
-  "spawn": { "x": 1600, "y": 1250 },
+  "spawn": { "x": 1600, "y": 1200 },
   "terrain": {
     "base": "grass",
     "regions": [
-      { "id": "north-forest", "type": "forest", "x": 0, "y": 0, "w": 1100, "h": 760 },
-      { "id": "central-meadow", "type": "grass", "x": 800, "y": 520, "w": 1500, "h": 1100 },
-      { "id": "west-meadow", "type": "grass", "x": 0, "y": 760, "w": 950, "h": 950 },
-      { "id": "east-forest", "type": "forest", "x": 2250, "y": 500, "w": 950, "h": 1250 },
-      { "id": "south-meadow", "type": "grass", "x": 450, "y": 1550, "w": 2350, "h": 850 },
-      { "id": "southwest-wetland", "type": "swamp", "x": 0, "y": 1650, "w": 650, "h": 750 }
+      { "id": "northwest-forest", "type": "forest", "x": 80, "y": 80, "w": 900, "h": 650 },
+      { "id": "north-forest", "type": "forest", "x": 1050, "y": 60, "w": 700, "h": 520 },
+      { "id": "northeast-forest", "type": "forest", "x": 2200, "y": 100, "w": 900, "h": 700 },
+      { "id": "west-meadow", "type": "grass", "x": 80, "y": 700, "w": 900, "h": 900 },
+      { "id": "central-meadow", "type": "grass", "x": 900, "y": 560, "w": 1400, "h": 1100 },
+      { "id": "east-meadow", "type": "grass", "x": 2200, "y": 760, "w": 900, "h": 900 },
+      { "id": "southwest-wetland", "type": "swamp", "x": 80, "y": 1650, "w": 850, "h": 650 },
+      { "id": "south-meadow", "type": "grass", "x": 900, "y": 1650, "w": 1400, "h": 650 },
+      { "id": "southeast-forest", "type": "forest", "x": 2300, "y": 1650, "w": 800, "h": 650 }
     ]
   },
   "water": [
-    { "id": "emerald-river", "type": "river", "points": [[120,430],[520,560],[820,760],[1120,940],[1460,1040],[1780,1220],[2070,1460],[2380,1660],[2790,1830],[3180,1950]] },
-    { "id": "south-pond", "type": "pond", "x": 260, "y": 1940, "w": 360, "h": 250 },
-    { "id": "hidden-pond", "type": "pond", "x": 2420, "y": 820, "w": 300, "h": 210 }
+    { "id": "emerald-river", "type": "river", "points": [[0,360],[360,470],[720,650],[1040,820],[1320,980],[1600,1120],[1900,1280],[2220,1450],[2580,1640],[3200,1840]] },
+    { "id": "south-pond", "type": "pond", "x": 280, "y": 1920, "w": 360, "h": 250 },
+    { "id": "forest-pond", "type": "pond", "x": 2460, "y": 350, "w": 300, "h": 210 },
+    { "id": "west-pond", "type": "pond", "x": 560, "y": 880, "w": 250, "h": 180 }
   ],
   "roads": [
-    { "id": "main-road", "points": [[1600,1250],[1500,950],[1350,720],[1160,520]] },
-    { "id": "west-road", "points": [[1600,1250],[1280,1280],[930,1330],[600,1320],[280,1160]] },
-    { "id": "south-road", "points": [[1600,1250],[1640,1450],[1600,1720],[1510,2040],[1460,2320]] },
-    { "id": "east-road", "points": [[1600,1250],[1900,1150],[2180,1120],[2490,1180],[2850,1300]]
-    }
+    { "id": "north-road", "points": [[1600,1200],[1530,950],[1450,700],[1370,480]] },
+    { "id": "west-road", "points": [[1600,1200],[1260,1220],[900,1260],[560,1260],[260,1160]] },
+    { "id": "south-road", "points": [[1600,1200],[1620,1450],[1600,1730],[1540,2020],[1500,2320]] },
+    { "id": "east-road", "points": [[1600,1200],[1900,1160],[2200,1160],[2520,1240],[2860,1380]] }
   ],
   "bridges": [
-    { "id": "central-bridge", "x": 1510, "y": 1120, "w": 190, "h": 70 },
-    { "id": "east-bridge", "x": 2300, "y": 1570, "w": 180, "h": 70 }
+    { "id": "central-bridge", "x": 1490, "y": 1060, "w": 210, "h": 80 },
+    { "id": "south-bridge", "x": 2240, "y": 1430, "w": 180, "h": 80 }
   ],
-  "structures": [
-    { "id": "vale-house-1", "type": "house", "sprite": "house", "x": 1450, "y": 1030, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
-    { "id": "vale-house-2", "type": "house", "sprite": "house", "x": 1660, "y": 1035, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
-    { "id": "vale-house-3", "type": "house", "sprite": "house", "x": 1450, "y": 1260, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
-    { "id": "vale-house-4", "type": "house", "sprite": "house", "x": 1660, "y": 1265, "w": 150, "h": 110, "spriteW": 145, "spriteH": 170 },
-    { "id": "west-hut", "type": "house", "sprite": "house", "x": 520, "y": 1180, "w": 130, "h": 100, "spriteW": 135, "spriteH": 155 },
-    { "id": "east-hut", "type": "house", "sprite": "house", "x": 2670, "y": 1120, "w": 130, "h": 100, "spriteW": 135, "spriteH": 155 }
-  ],
+  "structures": [],
   "resources": [
-    { "id": "herb-patch-1", "type": "herb", "x": 980, "y": 870 },
-    { "id": "herb-patch-2", "type": "herb", "x": 2040, "y": 930 },
+    { "id": "herb-patch-1", "type": "herb", "x": 1050, "y": 760 },
+    { "id": "herb-patch-2", "type": "herb", "x": 2050, "y": 900 },
     { "id": "ore-node-1", "type": "ore", "x": 720, "y": 520 },
-    { "id": "ore-node-2", "type": "ore", "x": 2790, "y": 650 }
+    { "id": "ore-node-2", "type": "ore", "x": 2800, "y": 700 }
   ],
   "landmarks": [
-    { "id": "vale-entrance", "type": "entrance", "x": 1600, "y": 2320, "target": "world-frontier" },
-    { "id": "forest-entrance", "type": "entrance", "x": 1160, "y": 520, "target": "whispering-woods" },
-    { "id": "east-entrance", "type": "entrance", "x": 2850, "y": 1300, "target": "riverbend-settlement" }
+    { "id": "vale-entrance", "type": "entrance", "x": 1500, "y": 2320, "target": "world-frontier" },
+    { "id": "forest-entrance", "type": "entrance", "x": 1370, "y": 480, "target": "whispering-woods" },
+    { "id": "east-entrance", "type": "entrance", "x": 2860, "y": 1380, "target": "riverbend-settlement" }
   ],
   "collision": {
     "default": "walkable",
