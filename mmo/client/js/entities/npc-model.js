@@ -1,0 +1,1 @@
+export function createNpcModel(data={}){return{id:data.id??'',name:data.name??'NPC',x:data.x??0,y:data.y??0,type:data.type??'villager',dialogue:data.dialogue??[],shopId:data.shopId??null,questIds:data.questIds??[]}}
