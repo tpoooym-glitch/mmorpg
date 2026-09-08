@@ -1,0 +1,4 @@
+{
+  "elder-mira":{"name":"Mira","type":"quest","dialogue":["Welcome to Emerald Vales.","I may have work for an adventurer."],"questIds":["slime-cleanup"]},
+  "merchant-elin":{"name":"Elin","type":"shop","dialogue":["Take a look at my supplies."],"shopId":"village-shop"}
+}
