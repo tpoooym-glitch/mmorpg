@@ -1,0 +1,1 @@
+export function calculateDamage(attacker,target,skill={}){const base=skill.power??attacker.attack??1;const defense=target.defense??0;const critical=skill.criticalChance??0;const isCritical=Math.random()<critical;const value=Math.max(1,base-defense)*(isCritical?(skill.criticalMultiplier??1.5):1);return{amount:Math.floor(value),critical:isCritical}}
