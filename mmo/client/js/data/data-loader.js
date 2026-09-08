@@ -1,0 +1,1 @@
+export async function loadJson(path,fallback={}){try{const response=await fetch(path);if(!response.ok)throw Error(`HTTP ${response.status}`);return await response.json()}catch(error){console.warn(`Data load failed: ${path}`,error);return fallback}}
