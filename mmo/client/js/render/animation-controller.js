@@ -1,0 +1,1 @@
+export function createAnimationController(){let state='idle',frame=0,elapsed=0;return{setState(next){if(state!==next){state=next;frame=0;elapsed=0}},update(dt,fps=8,frameCount=8){elapsed+=dt;if(elapsed>=1/fps){elapsed=0;frame=(frame+1)%frameCount}},get state(){return state},get frame(){return frame}}}
