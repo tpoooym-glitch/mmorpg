@@ -1,0 +1,6 @@
+{
+  "potion-small":{"name":"Small Potion","type":"consumable","stack":20,"buyPrice":15,"sellPrice":7,"effect":{"hp":30}},
+  "ether-small":{"name":"Small Ether","type":"consumable","stack":20,"buyPrice":20,"sellPrice":10,"effect":{"mp":20}},
+  "iron-sword":{"name":"Iron Sword","type":"weapon","slot":"weapon","buyPrice":100,"sellPrice":50,"stats":{"attack":8}},
+  "leather-armor":{"name":"Leather Armor","type":"armor","slot":"armor","buyPrice":80,"sellPrice":40,"stats":{"defense":4}}
+}
