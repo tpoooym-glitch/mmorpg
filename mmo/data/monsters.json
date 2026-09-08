@@ -1,0 +1,4 @@
+{
+  "slime":{"name":"Slime","level":1,"hp":40,"attack":6,"defense":2,"speed":55,"aggroRange":180,"attackRange":30,"respawnMs":15000,"drops":[{"itemId":"potion-small","chance":0.2,"quantity":1}],"gold":[2,6],"exp":12},
+  "forest-boar":{"name":"Forest Boar","level":2,"hp":65,"attack":10,"defense":4,"speed":70,"aggroRange":220,"attackRange":34,"respawnMs":20000,"drops":[],"gold":[4,10],"exp":20}
+}
