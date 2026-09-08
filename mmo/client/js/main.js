@@ -1,16 +1,14 @@
 /**
  * Updated Main Entry Point
- * - ใช้ multiplayer client
- * - เตรียม UI managers
- * - Load data + assets
- * - Game loop
+ * - Simple grass field (no mobs/buildings yet)
+ * - Focus on exploration and movement
+ * - Multiplayer ready
  */
 
 import { state } from './core/state.js';
 import { createInput } from './input/input-manager.js';
 import { loadZone } from './world/map-loader.js';
 import { generateDecor } from './world/decor-generator.js';
-import { createMobs } from './entities/mob-factory.js';
 import { move } from './systems/movement-system.js';
 import { loadAssets } from './render/asset-loader.js';
 import { drawScene } from './render/canvas-renderer.js';
@@ -46,19 +44,32 @@ let gameRunning = false;
 
 // ==================== Setup ====================
 async function start() {
-  console.log('[GAME] Initializing...');
+  console.log('[GAME] Initializing Arelia Online...');
+  console.log('[GAME] Loading assets...');
 
   // Wait for assets
   await ready;
+  console.log('[GAME] Assets ready');
 
-  // Load zone + mobs + decor
+  // Load zone (grass field)
   const loaded = await loadZone();
   state.zone = loaded.zone;
   state.error = loaded.error;
+  
+  if (!state.zone) {
+    console.error('[GAME] Failed to load zone');
+    state.error = 'Failed to load zone';
+    return;
+  }
+
   state.player.x = state.zone.spawn.x;
   state.player.y = state.zone.spawn.y;
   state.decor = generateDecor(state.zone);
-  state.mobs = createMobs(state.zone);
+  state.mobs = []; // No mobs for now
+
+  console.log(`[GAME] Zone loaded: ${state.zone.name}`);
+  console.log(`[GAME] Decor: ${state.decor.length} objects`);
+  console.log(`[GAME] Spawn: (${state.player.x}, ${state.player.y})`);
 
   // Initialize managers
   initInventory();
@@ -71,16 +82,16 @@ async function start() {
   initQuestLogUI();
   initShopUI();
 
-  // Connect to server
+  // Try to connect to server (optional for now)
   try {
+    console.log('[GAME] Connecting to server...');
     await connect('Adventurer', 'Warrior');
     gameRunning = true;
-    console.log('[GAME] Connected to server, starting game loop');
+    console.log('[GAME] Connected! Starting multiplayer game');
   } catch (err) {
-    console.error('[GAME] Connection failed:', err);
-    state.error = 'Failed to connect to server: ' + err.message;
-    // Game can still run in single-player mode
-    gameRunning = true;
+    console.warn('[GAME] Server connection failed, running in single-player mode');
+    console.warn('[GAME]', err.message);
+    gameRunning = true; // Still run game in single-player
   }
 
   // Start game loop
@@ -93,7 +104,7 @@ function loop(t) {
   last = t;
 
   if (gameRunning) {
-    // Update player movement
+    // Update player movement (server-side simulated)
     move(state, input.keys, dt);
 
     // Send input to server
@@ -128,8 +139,7 @@ document.addEventListener('keydown', (e) => {
 
 // ==================== Event Handlers ====================
 on('player_attack', () => {
-  console.log('[GAME] Attack pressed');
-  // TODO: Find nearest enemy and attack
+  console.log('[GAME] Attack pressed (no targets yet)');
 });
 
 on('multiplayer_error', (err) => {
@@ -138,11 +148,11 @@ on('multiplayer_error', (err) => {
 });
 
 on('multiplayer_disconnected', () => {
-  state.error = 'Disconnected from server';
-  console.warn('[GAME] Disconnected');
+  console.warn('[GAME] Server disconnected - continuing in single-player');
 });
 
 // ==================== Start ====================
+console.log('🎮 Arelia Online - Starting game...');
 start().catch(err => {
   console.error('[GAME] Fatal error:', err);
   state.error = 'Fatal error: ' + err.message;

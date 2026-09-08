@@ -1,3 +1,45 @@
-import {dist,inRect,nearLine} from '../core/utils.js';
-import {terrainAt} from './terrain.js';
-export function generateDecor(state){const z=state.zone,decor=[];let seed=8731;const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};const regions=(z.terrain?.regions||[]).filter(r=>r.type==='forest');for(const r of regions){const count=Math.max(24,Math.floor(r.w*r.h/18000));for(let n=0;n<count;n++){let placed=false;for(let tries=0;tries<30&&!placed;tries++){const x=r.x+30+rand()*(r.w-60),y=r.y+35+rand()*(r.h-70);if(terrainAt(state,x,y)!=='forest'||dist(x,y,state.player.x,state.player.y)<170)continue;if((z.structures||[]).some(s=>inRect(x,y,{x:s.x-70,y:s.y-70,w:s.w+140,h:s.h+140})))continue;if((z.roads||[]).some(q=>nearLine(x,y,q.points,70)))continue;if(decor.some(o=>dist(x,y,o.x,o.y)<70))continue;const type=rand()<.52?'oak':'pine';decor.push({x,y,type,blocked:true,r:type==='oak'?30:25,w:type==='oak'?105:82,h:type==='oak'?125:118});placed=true}}}for(let n=0;n<26;n++){const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);if(terrainAt(state,x,y)==='forest'&&!decor.some(o=>dist(x,y,o.x,o.y)<55))decor.push({x,y,type:'rock',blocked:true,r:24,w:50,h:45})}return decor}
+/**
+ * Decor Generator: สร้างต้นไม้ หินต่างๆ ในแผนที่
+ * - ใช้ asset ที่มีจริง (oak-large, pine-large, rock-large)
+ * - สร้างตำแหน่งแบบ procedural จากเมล็ด
+ */
+
+export function generateDecor(zone) {
+  if (!zone) return [];
+
+  const decor = [];
+  const { width = 2200, height = 1400 } = zone;
+
+  // ========== Trees ==========
+  // Oak trees: บริเวณตะวันตก
+  for (let i = 0; i < 15; i++) {
+    decor.push({
+      type: 'oak-large',
+      x: 100 + Math.random() * 400,
+      y: 200 + Math.random() * 600,
+      r: 25
+    });
+  }
+
+  // Pine trees: บริเวณตะวันออก
+  for (let i = 0; i < 12; i++) {
+    decor.push({
+      type: 'pine-large',
+      x: 1600 + Math.random() * 400,
+      y: 200 + Math.random() * 600,
+      r: 20
+    });
+  }
+
+  // ========== Rocks ==========
+  for (let i = 0; i < 20; i++) {
+    decor.push({
+      type: 'rock-large',
+      x: 200 + Math.random() * 1800,
+      y: 800 + Math.random() * 500,
+      r: 12
+    });
+  }
+
+  return decor;
+}

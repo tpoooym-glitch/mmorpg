@@ -1,6 +1,7 @@
 /**
  * Updated Asset Loader
  * - Load sprites and images
+ * - Use actual asset filenames from repository
  * - Fallback to shapes if missing
  * - Track loading errors
  */
@@ -20,31 +21,27 @@ export function loadAssets() {
     readyResolve = resolve;
   });
 
+  // ตรงกับไฟล์ที่มีจริงในโฟลเดอร์
   const assetSets = [
-    { name: 'player', category: 'entities' },
-    { name: 'warrior', category: 'entities' },
-    { name: 'mage', category: 'entities' },
-    { name: 'rogue', category: 'entities' },
-    { name: 'goblin', category: 'mobs' },
-    { name: 'orc', category: 'mobs' },
-    { name: 'grass', category: 'terrain' },
-    { name: 'forest', category: 'terrain' },
-    { name: 'water', category: 'terrain' },
-    { name: 'house', category: 'buildings' },
-    { name: 'shop', category: 'buildings' },
-    { name: 'tree', category: 'environment' },
-    { name: 'rock', category: 'environment' },
-    { name: 'bridge', category: 'structures' }
+    // Environment - มีจริง
+    { name: 'oak-large', category: 'environment', ext: 'svg' },
+    { name: 'pine-large', category: 'environment', ext: 'svg' },
+    { name: 'rock-large', category: 'environment', ext: 'svg' },
+    { name: 'trees-bushes-01', category: 'environment', ext: 'webp' },
+    { name: 'trees-bushes-02', category: 'environment', ext: 'webp' },
+    
+    // Buildings - มีจริง
+    { name: 'house-red', category: 'buildings', ext: 'svg' },
   ];
 
   let completed = 0;
   const total = assetSets.length;
 
-  assetSets.forEach(({ name, category }) => {
+  assetSets.forEach(({ name, category, ext }) => {
     const img = new Image();
     img.onerror = () => {
       assets.failed++;
-      const error = `Failed to load ${category}/${name}.svg`;
+      const error = `Failed to load ${category}/${name}.${ext}`;
       assets.errors.push(error);
       console.warn('[ASSETS]', error);
       completed++;
@@ -53,10 +50,11 @@ export function loadAssets() {
     img.onload = () => {
       assets.sprites.set(name, img);
       assets.loaded++;
+      console.log(`[ASSETS] ✓ ${name}.${ext}`);
       completed++;
       if (completed === total) finishLoading();
     };
-    img.src = `../assets/${category}/${name}.svg`;
+    img.src = `../assets/${category}/${name}.${ext}`;
   });
 
   return { assets, ready: readyPromise };
@@ -93,16 +91,21 @@ export function getAssetStats() {
 
 /**
  * Fallback shape rendering ถ้าไม่มี sprite
- * (จะใช้ใน canvas-renderer.js)
  */
 export const FALLBACK_SHAPES = {
+  // Trees
+  'oak-large': { type: 'rect', width: 40, height: 50, color: '#2a5a2a' },
+  'pine-large': { type: 'triangle', size: 25, color: '#1a4a1a' },
+  
+  // Rocks
+  'rock-large': { type: 'circle', size: 15, color: '#8a8a8a' },
+  
+  // Buildings
+  'house-red': { type: 'rect', width: 60, height: 50, color: '#dd4444' },
+  
+  // Entities
   player: { type: 'circle', size: 15, color: '#0088ff' },
   warrior: { type: 'circle', size: 15, color: '#ff4444' },
   mage: { type: 'circle', size: 15, color: '#ff00ff' },
   rogue: { type: 'circle', size: 15, color: '#ffaa00' },
-  goblin: { type: 'triangle', size: 12, color: '#00ff00' },
-  orc: { type: 'triangle', size: 20, color: '#00aa00' },
-  tree: { type: 'rect', width: 30, height: 40, color: '#228822' },
-  house: { type: 'rect', width: 60, height: 50, color: '#8844aa' },
-  shop: { type: 'rect', width: 50, height: 50, color: '#dd8844' }
 };

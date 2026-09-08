@@ -1,2 +1,38 @@
-const fallback={name:'Emerald Vales',width:3200,height:2400,spawn:{x:1600,y:1180},terrain:{base:'grass',regions:[]},water:[],roads:[],bridges:[],structures:[],resources:[],movement:{grassMultiplier:1,forestMultiplier:.85,swampMultiplier:.65,waterMultiplier:.45,roadMultiplier:1.15,bridgeMultiplier:1}};
-export async function loadZone(){try{const r=await fetch('../maps/emerald-vales.json');if(!r.ok)throw Error('HTTP '+r.status);return{zone:await r.json(),error:''}}catch(e){return{zone:fallback,error:e.message}}}
+/**
+ * Updated Emerald Vales Map
+ * - Grass field terrain ทั่วแผนที่
+ * - Spawn point ตรงกลาง
+ * - ไม่มี buildings/mobs ในตอนนี้
+ */
+
+export async function loadZone() {
+  try {
+    // ตอนนี้ return hardcoded grass field
+    const zone = {
+      id: 'emerald-vales',
+      name: 'Emerald Vales',
+      width: 2200,
+      height: 1400,
+      spawn: { x: 1100, y: 700 },
+      terrain: [
+        // Entire map is grass
+        {
+          type: 'grass',
+          x: 0,
+          y: 0,
+          width: 2200,
+          height: 1400
+        }
+      ],
+      collision: [
+        // No collision for now - just open field
+      ]
+    };
+
+    console.log('[MAP] Loaded Emerald Vales (grass field)');
+    return { zone, error: null };
+  } catch (err) {
+    console.error('[MAP] Failed to load zone:', err);
+    return { zone: null, error: err.message };
+  }
+}
