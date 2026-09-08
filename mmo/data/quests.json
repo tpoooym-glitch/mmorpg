@@ -1,9 +1,9 @@
 {
   "maxActive":5,
   "types":["hunt","explore","collect"],
-  "starterQuests":[
-    {"id":"goblin-hunt","title":"Goblin Hunt","target":"goblin","amount":5,"gold":80,"xp":100},
-    {"id":"wolf-patrol","title":"Wolf Patrol","target":"wolf","amount":5,"gold":95,"xp":120},
-    {"id":"slime-trouble","title":"Slime Trouble","target":"slime","amount":7,"gold":110,"xp":140}
+  "quests":[
+    {"id":"goblin-hunt","title":"Goblin Hunt","giverNpc":"elder-mira","objectives":[{"id":"kill-goblin","type":"kill","target":"goblin","required":5,"current":0}],"rewards":{"gold":80,"exp":100}},
+    {"id":"wolf-patrol","title":"Wolf Patrol","giverNpc":"elder-mira","objectives":[{"id":"kill-wolf","type":"kill","target":"wolf","required":5,"current":0}],"rewards":{"gold":95,"exp":120}},
+    {"id":"slime-trouble","title":"Slime Trouble","giverNpc":"elder-mira","objectives":[{"id":"kill-slime","type":"kill","target":"slime","required":7,"current":0}],"rewards":{"gold":110,"exp":140}}
   ]
 }
