@@ -1,5 +1,5 @@
 {
-  "warrior":{"name":"Warrior","hp":140,"mp":70,"atk":12,"def":6,"speed":155},
-  "mage":{"name":"Mage","hp":90,"mp":130,"atk":16,"def":3,"speed":145},
-  "rogue":{"name":"Rogue","hp":105,"mp":85,"atk":14,"def":4,"speed":180}
+  "warrior":{"name":"Warrior","stats":{"hp":140,"mp":70,"attack":12,"defense":6,"speed":155},"skills":["slash","guard"]},
+  "mage":{"name":"Mage","stats":{"hp":90,"mp":130,"attack":16,"defense":3,"speed":145},"skills":["fireball","heal"]},
+  "rogue":{"name":"Rogue","stats":{"hp":105,"mp":85,"attack":14,"defense":4,"speed":180},"skills":["quick-strike","evade"]}
 }
