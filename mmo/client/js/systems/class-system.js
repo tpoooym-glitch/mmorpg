@@ -1,0 +1,2 @@
+import {emit} from '../core/event-bus.js';
+export function applyClass(state,classId){const data=state.classData?.[classId];if(!data)return false;state.player.class=classId;state.player.maxHp=data.stats.hp;state.player.hp=Math.min(state.player.hp,state.player.maxHp);state.player.maxMp=data.stats.mp;state.player.mp=Math.min(state.player.mp,state.player.maxMp);state.player.skills=[...(data.skills||[])];emit('player:classChanged',classId);return true}
