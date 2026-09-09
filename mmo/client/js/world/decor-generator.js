@@ -25,7 +25,7 @@ export function generateDecor(state){
   const nearPond=(x,y,radius)=>((z.water||[]).some(w=>w.type==='pond'&&distToEllipse(x,y,w)<=radius));
   const nearWater=(x,y,radius)=>nearRiver(x,y,radius)||nearPond(x,y,radius);
 
-  // Dense tree clusters in forest regions. Trees are solid obstacles; collision is handled at their base radius.
+  // Dense forest clusters. Trees are solid obstacles.
   const forests=(z.terrain?.regions||[]).filter(r=>r.type==='forest');
   for(const r of forests){
     const count=Math.max(28,Math.floor(r.w*r.h/24000));
@@ -37,9 +37,9 @@ export function generateDecor(state){
     }
   }
 
-  // Scattered meadow trees connect the forest clusters to open grassland without turning the whole meadow into a forest.
+  // Scattered meadow trees create landmarks and natural routes through open grassland.
   const meadows=(z.terrain?.regions||[]).filter(r=>r.type==='grass');
-  for(let n=0;n<58;n++)for(let tries=0;tries<45;tries++){
+  for(let n=0;n<100;n++)for(let tries=0;tries<45;tries++){
     const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];
     if(!r)break;
     const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
@@ -51,15 +51,15 @@ export function generateDecor(state){
 
   // Small grass is visual-only and never blocks movement.
   const grassTypes=Array.from({length:12},(_,i)=>`grass${String(i+1).padStart(2,'0')}`);
-  for(let n=0;n<145;n++)for(let tries=0;tries<35;tries++){
+  for(let n=0;n<220;n++)for(let tries=0;tries<35;tries++){
     const x=70+rand()*(z.width-140),y=70+rand()*(z.height-140);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,34))continue;
     const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;
     decor.push({x,y,type,blocked:false,r:0,w:128*scale,h:128*scale});break;
   }
 
-  // Bushes are intentionally solid obstacles, matching the user's rule for bushes.
-  for(let n=0;n<70;n++)for(let tries=0;tries<40;tries++){
+  // Bushes are solid obstacles while small plants remain walkable.
+  for(let n=0;n<90;n++)for(let tries=0;tries<40;tries++){
     const x=80+rand()*(z.width-160),y=80+rand()*(z.height-160);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;
     const type=rand()<.18?'bushFlower':rand()<.42?'bushDark':rand()<.65?'bushLight':'bushMedium';
@@ -68,14 +68,14 @@ export function generateDecor(state){
   }
 
   // Forest rocks are solid obstacles.
-  for(let n=0;n<35;n++)for(let tries=0;tries<30;tries++){
+  for(let n=0;n<42;n++)for(let tries=0;tries<30;tries++){
     const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);
     if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,55)){decor.push({x,y,type:'rock',blocked:true,r:24,w:50,h:45});break}
   }
 
   // Natural freshwater ecosystem: vegetation sits near the bank, while larger debris can block movement.
   const softTypes=RIVER_SOURCES.filter(o=>!o.blocked),hardTypes=RIVER_SOURCES.filter(o=>o.blocked);
-  for(let n=0;n<72;n++)for(let tries=0;tries<45;tries++){
+  for(let n=0;n<84;n++)for(let tries=0;tries<45;tries++){
     const candidate=waterBankPoint(z,rand);
     if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,38))continue;
     const source=(n%9===0&&hardTypes.length)?hardTypes[Math.floor(rand()*hardTypes.length)]:softTypes[Math.floor(rand()*softTypes.length)];
