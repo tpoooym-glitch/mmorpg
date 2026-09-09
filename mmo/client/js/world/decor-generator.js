@@ -9,9 +9,10 @@ const RIVER_SOURCES=[
   {name:'branch',index:12,blocked:false},{name:'log',index:13,blocked:true},{name:'root',index:14,blocked:true},{name:'rootLarge',index:15,blocked:true}
 ];
 
-const TREE_SIZES={
-  oakSmall:[82,92,26],oakMedium:[105,110,32],oakLarge:[135,132,40],
-  pineSmall:[82,90,25],pineMedium:[108,120,31],pineLarge:[138,140,40]
+const NATURE_SIZES={
+  oakLarge:[150,145,42],oakMedium:[118,120,34],pineLarge:[150,150,42],pineMedium:[112,120,32],
+  stump:[86,72,30],log:[132,72,34],bushLarge:[125,100,36],bushSmall:[78,70,25],
+  rockLarge:[78,68,28],grassClump:[72,62,0],mushrooms:[66,58,0],flowers:[64,58,0]
 };
 
 export function generateDecor(state){
@@ -25,75 +26,73 @@ export function generateDecor(state){
   const nearPond=(x,y,radius)=>((z.water||[]).some(w=>w.type==='pond'&&distToEllipse(x,y,w)<=radius));
   const nearWater=(x,y,radius)=>nearRiver(x,y,radius)||nearPond(x,y,radius);
 
-  // Dense forest clusters. Trees are solid obstacles.
   const forests=(z.terrain?.regions||[]).filter(r=>r.type==='forest');
   for(const r of forests){
-    const count=Math.max(28,Math.floor(r.w*r.h/24000));
+    const count=Math.max(22,Math.floor(r.w*r.h/30000));
     for(let n=0;n<count;n++)for(let tries=0;tries<40;tries++){
-      const x=r.x+35+rand()*Math.max(1,r.w-70),y=r.y+45+rand()*Math.max(1,r.h-90);
-      if(!canPlace(x,y,78))continue;
-      const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.46?'pineSmall':roll<.62?'oakLarge':roll<.76?'oakMedium':'oakSmall';
-      const [w,h,radius]=TREE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
+      const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
+      if(!canPlace(x,y,105))continue;
+      const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.47?'pineMedium':roll<.64?'oakLarge':roll<.80?'oakMedium':'oakMedium';
+      const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
+    }
+    for(let n=0;n<18;n++)for(let tries=0;tries<25;tries++){
+      const x=r.x+30+rand()*Math.max(1,r.w-60),y=r.y+30+rand()*Math.max(1,r.h-60);
+      if(!canPlace(x,y,55))continue;
+      const type=rand()<.35?'stump':rand()<.62?'log':rand()<.80?'mushrooms':'grassClump';
+      const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:type==='stump'||type==='log',r:radius,w,h});break;
     }
   }
 
-  // Scattered meadow trees create landmarks and natural routes through open grassland.
   const meadows=(z.terrain?.regions||[]).filter(r=>r.type==='grass');
   for(let n=0;n<100;n++)for(let tries=0;tries<45;tries++){
-    const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];
-    if(!r)break;
-    const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
-    if(!canPlace(x,y,105))continue;
-    const roll=rand();
-    const type=roll<.16?'pineSmall':roll<.36?'oakSmall':roll<.72?'oakMedium':'oakLarge';
-    const [w,h,radius]=TREE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
+    const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];if(!r)break;
+    const x=r.x+55+rand()*Math.max(1,r.w-110),y=r.y+65+rand()*Math.max(1,r.h-130);
+    if(!canPlace(x,y,120))continue;
+    const type=rand()<.14?'pineMedium':rand()<.36?'oakMedium':'oakLarge';const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
   }
 
-  // Small grass is visual-only and never blocks movement.
   const grassTypes=Array.from({length:12},(_,i)=>`grass${String(i+1).padStart(2,'0')}`);
   for(let n=0;n<220;n++)for(let tries=0;tries<35;tries++){
     const x=70+rand()*(z.width-140),y=70+rand()*(z.height-140);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,34))continue;
-    const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;
-    decor.push({x,y,type,blocked:false,r:0,w:128*scale,h:128*scale});break;
+    const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;decor.push({x,y,type,blocked:false,r:0,w:128*scale,h:128*scale});break;
   }
 
-  // Bushes are solid obstacles while small plants remain walkable.
   for(let n=0;n<90;n++)for(let tries=0;tries<40;tries++){
     const x=80+rand()*(z.width-160),y=80+rand()*(z.height-160);
-    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;
-    const type=rand()<.18?'bushFlower':rand()<.42?'bushDark':rand()<.65?'bushLight':'bushMedium';
-    const sizes={bushFlower:[58,60,22],bushDark:[58,64,22],bushLight:[64,62,23],bushMedium:[68,64,24]};
-    const [w,h,radius]=sizes[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
+    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,55))continue;
+    const type=rand()<.45?'bushSmall':'bushLarge';const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
   }
 
-  // Forest rocks are solid obstacles.
   for(let n=0;n<42;n++)for(let tries=0;tries<30;tries++){
     const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);
-    if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,55)){decor.push({x,y,type:'rock',blocked:true,r:24,w:50,h:45});break}
+    if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,65)){const [w,h,radius]=NATURE_SIZES.rockLarge;decor.push({x,y,type:'rockLarge',blocked:true,r:radius,w,h});break}
   }
 
-  // Natural freshwater ecosystem: vegetation sits near the bank, while larger debris can block movement.
+  for(let n=0;n<70;n++)for(let tries=0;tries<25;tries++){
+    const x=60+rand()*(z.width-120),y=60+rand()*(z.height-120);
+    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;
+    const type=rand()<.45?'flowers':rand()<.72?'mushrooms':'grassClump';const [w,h]=NATURE_SIZES[type];decor.push({x,y,type,blocked:false,r:0,w,h});break;
+  }
+
   const softTypes=RIVER_SOURCES.filter(o=>!o.blocked),hardTypes=RIVER_SOURCES.filter(o=>o.blocked);
   for(let n=0;n<84;n++)for(let tries=0;tries<45;tries++){
     const candidate=waterBankPoint(z,rand);
-    if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,38))continue;
+    if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,42))continue;
     const source=(n%9===0&&hardTypes.length)?hardTypes[Math.floor(rand()*hardTypes.length)]:softTypes[Math.floor(rand()*softTypes.length)];
-    const scale=.42+rand()*.26;
-    decor.push({x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,r:source.blocked?Math.round(18+scale*14):0,w:128*scale,h:128*scale,sourceIndex:source.index});
-    break;
+    const scale=.42+rand()*.26;decor.push({x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,r:source.blocked?Math.round(18+scale*14):0,w:128*scale,h:128*scale,sourceIndex:source.index});break;
   }
   return decor;
 }
 
-function distToEllipse(x,y,w){const cx=w.x+w.w/2,cy=w.y+w.h/2;const dx=(x-cx)/(w.w/2),dy=(y-cy)/(w.h/2);return Math.abs(Math.sqrt(dx*dx+dy*dy)-1)*Math.min(w.w,w.h)/2}
+function distToEllipse(x,y,w){const cx=w.x+w.w/2,cy=w.y+w.h/2,dx=(x-cx)/(w.w/2),dy=(y-cy)/(w.h/2);return Math.abs(Math.sqrt(dx*dx+dy*dy)-1)*Math.min(w.w,w.h)/2}
 function waterBankPoint(z,rand){
   const waters=(z.water||[]).filter(Boolean);if(!waters.length)return null;
   const w=waters[Math.floor(rand()*waters.length)];
   if(w.type==='river'){
     const pts=w.points;if(pts.length<2)return null;const i=Math.floor(rand()*(pts.length-1)),a=pts[i],b=pts[i+1],t=.15+rand()*.7;
-    const x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t,dx=b[0]-a[0],dy=b[1]-a[1],len=Math.max(1,Math.hypot(dx,dy));
-    const side=rand()<.5?-1:1,offset=52+rand()*55;return{x:x+(-dy/len)*offset*side,y:y+(dx/len)*offset*side};
+    const x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t,dx=b[0]-a[0],dy=b[1]-a[1],len=Math.max(1,Math.hypot(dx,dy)),side=rand()<.5?-1:1,offset=52+rand()*55;
+    return{x:x+(-dy/len)*offset*side,y:y+(dx/len)*offset*side};
   }
   const ang=rand()*Math.PI*2,rx=w.w/2+55+rand()*45,ry=w.h/2+55+rand()*45;return{x:w.x+w.w/2+Math.cos(ang)*rx,y:w.y+w.h/2+Math.sin(ang)*ry};
 }
