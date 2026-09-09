@@ -14,4 +14,4 @@ const {assets,ready}=loadAssets();
 let last=performance.now();
 async function start(){const loaded=await loadZone();state.zone=loaded.zone;state.error=loaded.error;state.player.x=state.zone.spawn.x;state.player.y=state.zone.spawn.y;state.decor=generateDecor(state);state.mobs=createMobs();await ready;requestAnimationFrame(loop)}
 function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;move(state,input.keys,dt);drawScene(ctx,state,assets);updateHud(state);requestAnimationFrame(loop)}
-start();
+start().catch(error=>{state.error=`Startup failed: ${error?.message||error}`;console.error(error);requestAnimationFrame(loop)});
