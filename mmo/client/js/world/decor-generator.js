@@ -9,6 +9,11 @@ const RIVER_SOURCES=[
   {name:'branch',index:12,blocked:false},{name:'log',index:13,blocked:true},{name:'root',index:14,blocked:true},{name:'rootLarge',index:15,blocked:true}
 ];
 
+const TREE_SIZES={
+  oakSmall:[82,92,26],oakMedium:[105,110,32],oakLarge:[135,132,40],
+  pineSmall:[82,90,25],pineMedium:[108,120,31],pineLarge:[138,140,40]
+};
+
 export function generateDecor(state){
   const z=state.zone,decor=[];let seed=8731;
   const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
@@ -28,9 +33,20 @@ export function generateDecor(state){
       const x=r.x+35+rand()*Math.max(1,r.w-70),y=r.y+45+rand()*Math.max(1,r.h-90);
       if(!canPlace(x,y,78))continue;
       const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.46?'pineSmall':roll<.62?'oakLarge':roll<.76?'oakMedium':'oakSmall';
-      const sizes={oakSmall:[82,92,26],oakMedium:[105,110,32],oakLarge:[135,132,40],pineSmall:[82,90,25],pineMedium:[108,120,31],pineLarge:[138,140,40]};
-      const [w,h,radius]=sizes[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
+      const [w,h,radius]=TREE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
     }
+  }
+
+  // Scattered meadow trees connect the forest clusters to open grassland without turning the whole meadow into a forest.
+  const meadows=(z.terrain?.regions||[]).filter(r=>r.type==='grass');
+  for(let n=0;n<58;n++)for(let tries=0;tries<45;tries++){
+    const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];
+    if(!r)break;
+    const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
+    if(!canPlace(x,y,105))continue;
+    const roll=rand();
+    const type=roll<.16?'pineSmall':roll<.36?'oakSmall':roll<.72?'oakMedium':'oakLarge';
+    const [w,h,radius]=TREE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h});break;
   }
 
   // Small grass is visual-only and never blocks movement.
