@@ -1,1 +1,1 @@
-export const state={player:{x:1600,y:1180,r:15,speed:180,hp:100,maxHp:100,mp:50,maxMp:50,gold:100,xp:0,level:1,name:'Adventurer',class:'Warrior'},zone:null,mobs:[],decor:[],cam:{x:0,y:0},error:''}
+export const state={player:{x:1600,y:1180,r:15,speed:180,hp:100,maxHp:100,mp:50,maxMp:50,gold:100,xp:0,level:1,name:'Adventurer',class:'Warrior',attackDamage:20,attackRange:78,attackCooldown:0},zone:null,mobs:[],decor:[],cam:{x:0,y:0},error:''}
