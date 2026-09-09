@@ -1,12 +1,12 @@
 const sources={
   terrain:'assets/environment/ground-tileset.svg',
   water:'assets/environment/water-tileset.svg',
-  nature:'assets/environment/trees-bushes-02.webp',
-  rock:'assets/environment/rock-large.svg'
+  nature:'assets/environment/nature-atlas-fixed.svg',
+  rock:'assets/environment/rock-large.svg',
+  riverDecor:'assets/environment/river-decor-fixed.svg'
 };
 const encodedSources={
   grassDecor:{count:2,prefix:'assets/environment/grass-decor/grass-',suffix:'.b64'},
-  riverDecor:{count:4,prefix:'assets/environment/river-decor/river-',suffix:'.b64'},
   shore:{count:1,prefix:'assets/environment/river-shore/shore-',suffix:'.b64'}
 };
 function loadImage(src){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('Asset failed: '+src));image.src=src})}
