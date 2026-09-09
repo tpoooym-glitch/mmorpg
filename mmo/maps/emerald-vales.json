@@ -1,7 +1,7 @@
 {
   "id": "emerald-vales",
   "name": "Emerald Vales",
-  "version": 5,
+  "version": 6,
   "tileSize": 32,
   "width": 6400,
   "height": 4800,
@@ -36,16 +36,8 @@
     "meadow": { "vegetation": ["grass", "small_plants", "flowers", "bushes"] },
     "wetland": { "vegetation": ["wet_grass", "reeds", "aquatic_plants", "mud"] }
   },
-  "roads": [
-    { "id": "north-road", "points": [[3200,2400],[3060,1900],[2900,1400],[2740,960]] },
-    { "id": "west-road", "points": [[3200,2400],[2520,2440],[1800,2520],[1120,2520],[520,2320]] },
-    { "id": "south-road", "points": [[3200,2400],[3240,2900],[3200,3460],[3080,4040],[3000,4640]] },
-    { "id": "east-road", "points": [[3200,2400],[3800,2320],[4400,2320],[5040,2480],[5720,2760]] }
-  ],
-  "bridges": [
-    { "id": "central-bridge", "x": 2980, "y": 2120, "w": 420, "h": 160 },
-    { "id": "south-bridge", "x": 4480, "y": 2860, "w": 360, "h": 160 }
-  ],
+  "roads": [],
+  "bridges": [],
   "structures": [],
   "resources": [
     { "id": "herb-patch-1", "type": "herb", "x": 2100, "y": 1520 },
