@@ -6,7 +6,7 @@ const sources={
 };
 const encodedSources={
   grassDecor:{count:2,prefix:'assets/environment/grass-decor/grass-',suffix:'.b64'},
-  riverDecor:{count:3,prefix:'assets/environment/river-decor/river-',suffix:'.b64'},
+  riverDecor:{count:4,prefix:'assets/environment/river-decor/river-',suffix:'.b64'},
   shore:{count:1,prefix:'assets/environment/river-shore/shore-',suffix:'.b64'}
 };
 function loadImage(src){return new Promise((resolve,reject)=>{const image=new Image();image.onload=()=>resolve(image);image.onerror=()=>reject(new Error('Asset failed: '+src));image.src=src})}
