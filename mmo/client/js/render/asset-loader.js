@@ -1,7 +1,9 @@
 const sources={terrain:'assets/environment/ground-tileset.svg'};
 const encodedSources={
   water:{files:['assets/environment/water-real/water.webp.b64']},
-  nature:{files:['assets/environment/nature-real/nature.webp.b64']},
+  oakLarge:{files:['assets/environment/nature-real/oak-large.webp.b64']},
+  oakMedium:{files:['assets/environment/nature-real/oak-medium.webp.b64']},
+  pineLarge:{files:['assets/environment/nature-real/pine-large.webp.b64']},
   riverDecor:{files:['assets/environment/river-real/river.webp.b64']},
   shore:{files:['assets/environment/water-real/shore.webp.b64']},
   grassDecor:{files:['assets/environment/grass-decor/grass-00.b64','assets/environment/grass-decor/grass-01.b64']}
