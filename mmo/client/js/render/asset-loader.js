@@ -1,6 +1,6 @@
 const sources={terrain:'assets/environment/ground-tileset.svg'};
 const encodedSources={
-  water:{files:['assets/environment/water-real/water.webp.b64']},
+  water:{files:['assets/environment/water-real/water-wave-atlas.webp.b64']},
   oakLarge:{files:['assets/environment/nature-real/oak-large.webp.b64']},
   oakMedium:{files:['assets/environment/nature-real/oak-medium.webp.b64']},
   pineLarge:{files:['assets/environment/nature-real/pine-large.webp.b64']},
