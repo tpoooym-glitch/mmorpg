@@ -3,6 +3,7 @@ const encodedSources={
   water:{path:'assets/environment/water-real/water-wave-atlas.webp.b64'},
   shore:{path:'assets/environment/water-real/shore.webp.b64'},
   riverDecor:{path:'assets/environment/river-real/river.webp.b64'},
+  nature:{path:'assets/environment/nature-fixed/nature-00.b64'},
   oakLarge:{path:'assets/environment/nature-real/oak-large.webp.b64'},
   oakMedium:{path:'assets/environment/nature-real/oak-medium.webp.b64'},
   pineLarge:{path:'assets/environment/nature-real/pine-large.webp.b64'},
