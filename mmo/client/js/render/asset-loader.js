@@ -1,7 +1,7 @@
 const sources={terrain:'assets/environment/ground-tileset.svg',rock:'assets/environment/rock-large.svg'};
 const encodedSources={
   waterFill:{path:'assets/environment/water-real/water-fill.webp.b64'},
-  waterAtlas:{path:'assets/environment/water-real/water-wave-atlas.webp.b64'},
+  waterAtlas:{path:'assets/environment/water-real/water-atlas.webp.b64'},
   water:{path:'assets/environment/water-real/water-fill.webp.b64'},
   shore:{path:'assets/environment/water-real/shore.webp.b64'},
   riverDecor:{path:'assets/environment/river-real/river.webp.b64'},
