@@ -9,10 +9,11 @@ const RIVER_SOURCES=[
   {name:'branch',index:12,blocked:false},{name:'log',index:13,blocked:true},{name:'root',index:14,blocked:true},{name:'rootLarge',index:15,blocked:true}
 ];
 const NATURE_SIZES={oakLarge:[150,145,42],oakMedium:[118,120,34],pineLarge:[150,150,42],pineMedium:[112,120,32],stump:[86,72,30],log:[132,72,34],bushLarge:[125,100,36],bushSmall:[78,70,25],rockLarge:[78,68,28],grassClump:[72,62,0],mushrooms:[66,58,0],flowers:[64,58,0]};
+const TREE_TYPES=new Set(['oakLarge','oakMedium','pineLarge','pineMedium']);
 const TREE_COLLISION={oakLarge:[34,22,0,0],oakMedium:[28,20,0,0],pineLarge:[34,22,0,0],pineMedium:[28,20,0,0]};
 const NATURE_COLLISION={stump:[48,28,0,0],log:[78,26,0,0],bushLarge:[56,28,0,0],bushSmall:[38,22,0,0],rockLarge:[46,28,0,0]};
 function collisionData(type){return TREE_COLLISION[type]||NATURE_COLLISION[type]||[0,0,0,0]}
-function addDecor(decor,data){const [w,h]=NATURE_SIZES[data.type]||[data.w||48,data.h||48];const [dcw,dch,dcox,dcoy]=collisionData(data.type);decor.push({...data,w:data.w||w,h:data.h||h,blocked:Boolean(data.blocked),collisionWidth:data.collisionWidth??dcw,collisionHeight:data.collisionHeight??dch,collisionOffsetX:data.collisionOffsetX??dcox,collisionOffsetY:data.collisionOffsetY??dcoy})}
+function addDecor(decor,data){const [w,h]=NATURE_SIZES[data.type]||[data.w||48,data.h||48];const [dcw,dch,dcox,dcoy]=collisionData(data.type);decor.push({...data,w:data.w||w,h:data.h||h,blocked:Boolean(data.blocked),treeFootprint:TREE_TYPES.has(data.type),collisionWidth:data.collisionWidth??dcw,collisionHeight:data.collisionHeight??dch,collisionOffsetX:data.collisionOffsetX??dcox,collisionOffsetY:data.collisionOffsetY??dcoy})}
 export function generateDecor(state){
   const z=state.zone,decor=[];let seed=8731;
   const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
