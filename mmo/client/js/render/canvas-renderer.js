@@ -1,7 +1,7 @@
 import {clamp} from '../core/utils.js';
 function hash2(ix,iy,seed){let h=Math.imul(ix,374761393)^Math.imul(iy,668265263)^Math.imul(seed,2147483647);h=Math.imul(h^(h>>>15),2246822519);h=Math.imul(h^(h>>>13),3266489917);h^=h>>>16;return((h>>>0)%100000)/100000}
 function smooth(t){return t*t*(3-2*t)}
-function valueNoise(x,y,cell,seed){const gx=x/cell,gy=y/cell,x0=Math.floor(gx),y0=Math.floor(gy),x1=x0+1,y1=y0+1,sx=smooth(gx-x0),sy=smooth(gy-y0),n00=hash2(x0,y0,seed),n10=hash2(x1,y0,seed),n01=hash2(x0,y1,seed),n11=hash2(x1,y1,seed),nx0=n00+(n10-n00)*sx,nx1=n01+(n11-n01)*sx;return nx0+(nx1-n01)*sy}
+function valueNoise(x,y,cell,seed){const gx=x/cell,gy=y/cell,x0=Math.floor(gx),y0=Math.floor(gy),x1=x0+1,y1=y0+1,sx=smooth(gx-x0),sy=smooth(gy-y0),n00=hash2(x0,y0,seed),n10=hash2(x1,y0,seed),n01=hash2(x0,y1,seed),n11=hash2(x1,y1,seed),nx0=n00+(n10-n00)*sx,nx1=n01+(n11-n01)*sx;return nx0+(nx1-nx0)*sy}
 function regionAt(z,x,y){const regions=z.terrain?.regions||[];for(let i=regions.length-1;i>=0;i--){const r=regions[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return r.type}return z.terrain?.base||'grass'}
 function tileIndexAt(wx,wy,region){const nL=valueNoise(wx,wy,224,101),nS=valueNoise(wx,wy,72,307),v=nL*.7+nS*.3;let darkT=.30,brightT=.84;if(region==='forest'){darkT=.55;brightT=.95}else if(region==='swamp'){darkT=.62;brightT=.97}if(v<darkT)return nS<.5?2:3;if(v>=brightT)return 1;return 0}
 const patternCache=new WeakMap();
