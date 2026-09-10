@@ -9,7 +9,9 @@ import {loadAssets} from './render/asset-loader.js';
 import {drawScene} from './render/canvas-renderer.js';
 import {updateHud} from './ui/hud.js';
 const canvas=document.querySelector('#game'),ctx=canvas.getContext('2d');
-const input=createInput(()=>attack(state),()=>{state.debug.hitboxes=!state.debug.hitboxes});
+const debugToggle=document.querySelector('#debug-toggle');
+const input=createInput(()=>attack(state));
+debugToggle?.addEventListener('click',()=>{state.debug.hitboxes=!state.debug.hitboxes;debugToggle.setAttribute('aria-pressed',String(state.debug.hitboxes));debugToggle.textContent=state.debug.hitboxes?'DEBUG ON':'DEBUG'});
 const {assets,ready}=loadAssets();
 let last=performance.now();
 async function start(){const loaded=await loadZone();state.zone=loaded.zone;state.error=loaded.error;state.player.x=state.zone.spawn.x;state.player.y=state.zone.spawn.y;state.decor=generateDecor(state);state.mobs=createMobs();requestAnimationFrame(loop);ready.catch(error=>{state.error=`Asset startup failed: ${error?.message||error}`;console.error(error)})}
