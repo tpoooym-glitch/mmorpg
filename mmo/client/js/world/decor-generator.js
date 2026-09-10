@@ -14,7 +14,15 @@ const NATURE_SIZES={
   stump:[86,72,30],log:[132,72,34],bushLarge:[125,100,36],bushSmall:[78,70,25],
   rockLarge:[78,68,28],grassClump:[72,62,0],mushrooms:[66,58,0],flowers:[64,58,0]
 };
-const TREE_COLLISION={oakLarge:[28,-10],oakMedium:[24,-8],pineLarge:[28,-10],pineMedium:[23,-8]};
+const TREE_COLLISION={
+  oakLarge:[34,22,0,0],oakMedium:[28,20,0,0],pineLarge:[34,22,0,0],pineMedium:[28,20,0,0]
+};
+const NATURE_COLLISION={
+  stump:[48,28,0,0],log:[78,26,0,0],bushLarge:[56,28,0,0],bushSmall:[38,22,0,0],rockLarge:[46,28,0,0]
+};
+
+function collisionData(type){return TREE_COLLISION[type]||NATURE_COLLISION[type]||[0,0,0,0]}
+function addDecor(decor,data){const [w,h]=NATURE_SIZES[data.type]||[data.w||48,data.h||48];const [cw,ch,cox,coy]=collisionData(data.type);decor.push({...data,w:data.w||w,h:data.h||h,blocked:Boolean(data.blocked),collisionWidth:cw,collisionHeight:ch,collisionOffsetX:cox,collisionOffsetY:coy})}
 
 export function generateDecor(state){
   const z=state.zone,decor=[];let seed=8731;
@@ -34,13 +42,13 @@ export function generateDecor(state){
       const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
       if(!canPlace(x,y,105))continue;
       const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.47?'pineMedium':roll<.64?'oakLarge':roll<.80?'oakMedium':'oakMedium';
-      const [w,h]=NATURE_SIZES[type],collision=TREE_COLLISION[type];decor.push({x,y,type,blocked:true,r:collision?.[0]||28,w,h,collisionRadius:collision?.[0]||28,collisionYOffset:collision?.[1]||0});break;
+      addDecor(decor,{x,y,type,blocked:true});break;
     }
     for(let n=0;n<18;n++)for(let tries=0;tries<25;tries++){
       const x=r.x+30+rand()*Math.max(1,r.w-60),y=r.y+30+rand()*Math.max(1,r.h-60);
       if(!canPlace(x,y,55))continue;
       const type=rand()<.35?'stump':rand()<.62?'log':rand()<.80?'mushrooms':'grassClump';
-      const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:type==='stump'||type==='log',r:radius,w,h,collisionRadius:radius});break;
+      addDecor(decor,{x,y,type,blocked:type==='stump'||type==='log'});break;
     }
   }
 
@@ -49,31 +57,31 @@ export function generateDecor(state){
     const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];if(!r)break;
     const x=r.x+55+rand()*Math.max(1,r.w-110),y=r.y+65+rand()*Math.max(1,r.h-130);
     if(!canPlace(x,y,120))continue;
-    const type=rand()<.14?'pineMedium':rand()<.36?'oakMedium':'oakLarge';const [w,h]=NATURE_SIZES[type],collision=TREE_COLLISION[type];decor.push({x,y,type,blocked:true,r:collision?.[0]||28,w,h,collisionRadius:collision?.[0]||28,collisionYOffset:collision?.[1]||0});break;
+    const type=rand()<.14?'pineMedium':rand()<.36?'oakMedium':'oakLarge';addDecor(decor,{x,y,type,blocked:true});break;
   }
 
   const grassTypes=Array.from({length:12},(_,i)=>`grass${String(i+1).padStart(2,'0')}`);
   for(let n=0;n<220;n++)for(let tries=0;tries<35;tries++){
     const x=70+rand()*(z.width-140),y=70+rand()*(z.height-140);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,34))continue;
-    const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;decor.push({x,y,type,blocked:false,r:0,w:128*scale,h:128*scale});break;
+    const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;addDecor(decor,{x,y,type,blocked:false,w:128*scale,h:128*scale});break;
   }
 
   for(let n=0;n<90;n++)for(let tries=0;tries<40;tries++){
     const x=80+rand()*(z.width-160),y=80+rand()*(z.height-160);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,55))continue;
-    const type=rand()<.45?'bushSmall':'bushLarge';const [w,h,radius]=NATURE_SIZES[type];decor.push({x,y,type,blocked:true,r:radius,w,h,collisionRadius:radius});break;
+    const type=rand()<.45?'bushSmall':'bushLarge';addDecor(decor,{x,y,type,blocked:true});break;
   }
 
   for(let n=0;n<42;n++)for(let tries=0;tries<30;tries++){
     const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);
-    if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,65)){const [w,h,radius]=NATURE_SIZES.rockLarge;decor.push({x,y,type:'rockLarge',blocked:true,r:radius,w,h,collisionRadius:radius});break}
+    if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,65))addDecor(decor,{x,y,type:'rockLarge',blocked:true});
   }
 
   for(let n=0;n<70;n++)for(let tries=0;tries<25;tries++){
     const x=60+rand()*(z.width-120),y=60+rand()*(z.height-120);
     if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;
-    const type=rand()<.45?'flowers':rand()<.72?'mushrooms':'grassClump';const [w,h]=NATURE_SIZES[type];decor.push({x,y,type,blocked:false,r:0,w,h});break;
+    const type=rand()<.45?'flowers':rand()<.72?'mushrooms':'grassClump';addDecor(decor,{x,y,type,blocked:false});break;
   }
 
   const softTypes=RIVER_SOURCES.filter(o=>!o.blocked),hardTypes=RIVER_SOURCES.filter(o=>o.blocked);
@@ -81,7 +89,7 @@ export function generateDecor(state){
     const candidate=waterBankPoint(z,rand);
     if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,42))continue;
     const source=(n%9===0&&hardTypes.length)?hardTypes[Math.floor(rand()*hardTypes.length)]:softTypes[Math.floor(rand()*softTypes.length)];
-    const scale=.42+rand()*.26;decor.push({x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,r:source.blocked?Math.round(18+scale*14):0,w:128*scale,h:128*scale,sourceIndex:source.index,collisionRadius:source.blocked?Math.round(18+scale*14):0});break;
+    const scale=.42+rand()*.26;addDecor(decor,{x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,w:128*scale,h:128*scale,sourceIndex:source.index,collisionWidth:source.blocked?Math.max(20,128*scale*.42):0,collisionHeight:source.blocked?Math.max(14,128*scale*.20):0});break;
   }
   return decor;
 }
