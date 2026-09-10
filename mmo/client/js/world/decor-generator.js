@@ -8,22 +8,11 @@ const RIVER_SOURCES=[
   {name:'mudPatch',index:9,blocked:false},{name:'waterPlant',index:10,blocked:false},{name:'seaweed',index:11,blocked:false},
   {name:'branch',index:12,blocked:false},{name:'log',index:13,blocked:true},{name:'root',index:14,blocked:true},{name:'rootLarge',index:15,blocked:true}
 ];
-
-const NATURE_SIZES={
-  oakLarge:[150,145,42],oakMedium:[118,120,34],pineLarge:[150,150,42],pineMedium:[112,120,32],
-  stump:[86,72,30],log:[132,72,34],bushLarge:[125,100,36],bushSmall:[78,70,25],
-  rockLarge:[78,68,28],grassClump:[72,62,0],mushrooms:[66,58,0],flowers:[64,58,0]
-};
-const TREE_COLLISION={
-  oakLarge:[34,22,0,0],oakMedium:[28,20,0,0],pineLarge:[34,22,0,0],pineMedium:[28,20,0,0]
-};
-const NATURE_COLLISION={
-  stump:[48,28,0,0],log:[78,26,0,0],bushLarge:[56,28,0,0],bushSmall:[38,22,0,0],rockLarge:[46,28,0,0]
-};
-
+const NATURE_SIZES={oakLarge:[150,145,42],oakMedium:[118,120,34],pineLarge:[150,150,42],pineMedium:[112,120,32],stump:[86,72,30],log:[132,72,34],bushLarge:[125,100,36],bushSmall:[78,70,25],rockLarge:[78,68,28],grassClump:[72,62,0],mushrooms:[66,58,0],flowers:[64,58,0]};
+const TREE_COLLISION={oakLarge:[34,22,0,0],oakMedium:[28,20,0,0],pineLarge:[34,22,0,0],pineMedium:[28,20,0,0]};
+const NATURE_COLLISION={stump:[48,28,0,0],log:[78,26,0,0],bushLarge:[56,28,0,0],bushSmall:[38,22,0,0],rockLarge:[46,28,0,0]};
 function collisionData(type){return TREE_COLLISION[type]||NATURE_COLLISION[type]||[0,0,0,0]}
-function addDecor(decor,data){const [w,h]=NATURE_SIZES[data.type]||[data.w||48,data.h||48];const [cw,ch,cox,coy]=collisionData(data.type);decor.push({...data,w:data.w||w,h:data.h||h,blocked:Boolean(data.blocked),collisionWidth:cw,collisionHeight:ch,collisionOffsetX:cox,collisionOffsetY:coy})}
-
+function addDecor(decor,data){const [w,h]=NATURE_SIZES[data.type]||[data.w||48,data.h||48];const [dcw,dch,dcox,dcoy]=collisionData(data.type);decor.push({...data,w:data.w||w,h:data.h||h,blocked:Boolean(data.blocked),collisionWidth:data.collisionWidth??dcw,collisionHeight:data.collisionHeight??dch,collisionOffsetX:data.collisionOffsetX??dcox,collisionOffsetY:data.collisionOffsetY??dcoy})}
 export function generateDecor(state){
   const z=state.zone,decor=[];let seed=8731;
   const rand=()=>{seed=(seed*1664525+1013904223)>>>0;return seed/4294967296};
@@ -34,74 +23,18 @@ export function generateDecor(state){
   const nearRiver=(x,y,radius)=>((z.water||[]).some(w=>w.type==='river'&&nearLine(x,y,w.points,radius)));
   const nearPond=(x,y,radius)=>((z.water||[]).some(w=>w.type==='pond'&&distToEllipse(x,y,w)<=radius));
   const nearWater=(x,y,radius)=>nearRiver(x,y,radius)||nearPond(x,y,radius);
-
   const forests=(z.terrain?.regions||[]).filter(r=>r.type==='forest');
-  for(const r of forests){
-    const count=Math.max(22,Math.floor(r.w*r.h/30000));
-    for(let n=0;n<count;n++)for(let tries=0;tries<40;tries++){
-      const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);
-      if(!canPlace(x,y,105))continue;
-      const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.47?'pineMedium':roll<.64?'oakLarge':roll<.80?'oakMedium':'oakMedium';
-      addDecor(decor,{x,y,type,blocked:true});break;
-    }
-    for(let n=0;n<18;n++)for(let tries=0;tries<25;tries++){
-      const x=r.x+30+rand()*Math.max(1,r.w-60),y=r.y+30+rand()*Math.max(1,r.h-60);
-      if(!canPlace(x,y,55))continue;
-      const type=rand()<.35?'stump':rand()<.62?'log':rand()<.80?'mushrooms':'grassClump';
-      addDecor(decor,{x,y,type,blocked:type==='stump'||type==='log'});break;
-    }
-  }
-
+  for(const r of forests){const count=Math.max(22,Math.floor(r.w*r.h/30000));for(let n=0;n<count;n++)for(let tries=0;tries<40;tries++){const x=r.x+45+rand()*Math.max(1,r.w-90),y=r.y+55+rand()*Math.max(1,r.h-110);if(!canPlace(x,y,105))continue;const roll=rand();const type=roll<.18?'pineLarge':roll<.34?'pineMedium':roll<.47?'pineMedium':roll<.64?'oakLarge':roll<.80?'oakMedium':'oakMedium';addDecor(decor,{x,y,type,blocked:true});break}for(let n=0;n<18;n++)for(let tries=0;tries<25;tries++){const x=r.x+30+rand()*Math.max(1,r.w-60),y=r.y+30+rand()*Math.max(1,r.h-60);if(!canPlace(x,y,55))continue;const type=rand()<.35?'stump':rand()<.62?'log':rand()<.80?'mushrooms':'grassClump';addDecor(decor,{x,y,type,blocked:type==='stump'||type==='log'});break}}
   const meadows=(z.terrain?.regions||[]).filter(r=>r.type==='grass');
-  for(let n=0;n<100;n++)for(let tries=0;tries<45;tries++){
-    const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];if(!r)break;
-    const x=r.x+55+rand()*Math.max(1,r.w-110),y=r.y+65+rand()*Math.max(1,r.h-130);
-    if(!canPlace(x,y,120))continue;
-    const type=rand()<.14?'pineMedium':rand()<.36?'oakMedium':'oakLarge';addDecor(decor,{x,y,type,blocked:true});break;
-  }
-
+  for(let n=0;n<100;n++)for(let tries=0;tries<45;tries++){const r=meadows[Math.floor(rand()*Math.max(1,meadows.length))];if(!r)break;const x=r.x+55+rand()*Math.max(1,r.w-110),y=r.y+65+rand()*Math.max(1,r.h-130);if(!canPlace(x,y,120))continue;const type=rand()<.14?'pineMedium':rand()<.36?'oakMedium':'oakLarge';addDecor(decor,{x,y,type,blocked:true});break}
   const grassTypes=Array.from({length:12},(_,i)=>`grass${String(i+1).padStart(2,'0')}`);
-  for(let n=0;n<220;n++)for(let tries=0;tries<35;tries++){
-    const x=70+rand()*(z.width-140),y=70+rand()*(z.height-140);
-    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,34))continue;
-    const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;addDecor(decor,{x,y,type,blocked:false,w:128*scale,h:128*scale});break;
-  }
-
-  for(let n=0;n<90;n++)for(let tries=0;tries<40;tries++){
-    const x=80+rand()*(z.width-160),y=80+rand()*(z.height-160);
-    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,55))continue;
-    const type=rand()<.45?'bushSmall':'bushLarge';addDecor(decor,{x,y,type,blocked:true});break;
-  }
-
-  for(let n=0;n<42;n++)for(let tries=0;tries<30;tries++){
-    const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);
-    if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,65))addDecor(decor,{x,y,type:'rockLarge',blocked:true});
-  }
-
-  for(let n=0;n<70;n++)for(let tries=0;tries<25;tries++){
-    const x=60+rand()*(z.width-120),y=60+rand()*(z.height-120);
-    if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;
-    const type=rand()<.45?'flowers':rand()<.72?'mushrooms':'grassClump';addDecor(decor,{x,y,type,blocked:false});break;
-  }
-
+  for(let n=0;n<220;n++)for(let tries=0;tries<35;tries++){const x=70+rand()*(z.width-140),y=70+rand()*(z.height-140);if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,34))continue;const type=grassTypes[Math.floor(rand()*grassTypes.length)],scale=.48+rand()*.22;addDecor(decor,{x,y,type,blocked:false,w:128*scale,h:128*scale});break}
+  for(let n=0;n<90;n++)for(let tries=0;tries<40;tries++){const x=80+rand()*(z.width-160),y=80+rand()*(z.height-160);if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,55))continue;const type=rand()<.45?'bushSmall':'bushLarge';addDecor(decor,{x,y,type,blocked:true});break}
+  for(let n=0;n<42;n++)for(let tries=0;tries<30;tries++){const x=40+rand()*(z.width-80),y=40+rand()*(z.height-80);if(terrainAt(state,x,y)==='forest'&&canPlace(x,y,65)){addDecor(decor,{x,y,type:'rockLarge',blocked:true});break}}
+  for(let n=0;n<70;n++)for(let tries=0;tries<25;tries++){const x=60+rand()*(z.width-120),y=60+rand()*(z.height-120);if(terrainAt(state,x,y)!=='grass'||!canPlace(x,y,48))continue;const type=rand()<.45?'flowers':rand()<.72?'mushrooms':'grassClump';addDecor(decor,{x,y,type,blocked:false});break}
   const softTypes=RIVER_SOURCES.filter(o=>!o.blocked),hardTypes=RIVER_SOURCES.filter(o=>o.blocked);
-  for(let n=0;n<84;n++)for(let tries=0;tries<45;tries++){
-    const candidate=waterBankPoint(z,rand);
-    if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,42))continue;
-    const source=(n%9===0&&hardTypes.length)?hardTypes[Math.floor(rand()*hardTypes.length)]:softTypes[Math.floor(rand()*softTypes.length)];
-    const scale=.42+rand()*.26;addDecor(decor,{x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,w:128*scale,h:128*scale,sourceIndex:source.index,collisionWidth:source.blocked?Math.max(20,128*scale*.42):0,collisionHeight:source.blocked?Math.max(14,128*scale*.20):0});break;
-  }
+  for(let n=0;n<84;n++)for(let tries=0;tries<45;tries++){const candidate=waterBankPoint(z,rand);if(!candidate||!nearWater(candidate.x,candidate.y,115)||waterAt(candidate.x,candidate.y)||!canPlace(candidate.x,candidate.y,42))continue;const source=(n%9===0&&hardTypes.length)?hardTypes[Math.floor(rand()*hardTypes.length)]:softTypes[Math.floor(rand()*softTypes.length)];const scale=.42+rand()*.26;addDecor(decor,{x:candidate.x,y:candidate.y,type:source.name,blocked:source.blocked,w:128*scale,h:128*scale,sourceIndex:source.index,collisionWidth:source.blocked?Math.max(20,128*scale*.42):0,collisionHeight:source.blocked?Math.max(14,128*scale*.20):0});break}
   return decor;
 }
-
 function distToEllipse(x,y,w){const cx=w.x+w.w/2,cy=w.y+w.h/2,dx=(x-cx)/(w.w/2),dy=(y-cy)/(w.h/2);return Math.abs(Math.sqrt(dx*dx+dy*dy)-1)*Math.min(w.w,w.h)/2}
-function waterBankPoint(z,rand){
-  const waters=(z.water||[]).filter(Boolean);if(!waters.length)return null;
-  const w=waters[Math.floor(rand()*waters.length)];
-  if(w.type==='river'){
-    const pts=w.points;if(pts.length<2)return null;const i=Math.floor(rand()*(pts.length-1)),a=pts[i],b=pts[i+1],t=.15+rand()*.7;
-    const x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t,dx=b[0]-a[0],dy=b[1]-a[1],len=Math.max(1,Math.hypot(dx,dy)),side=rand()<.5?-1:1,offset=52+rand()*55;
-    return{x:x+(-dy/len)*offset*side,y:y+(dx/len)*offset*side};
-  }
-  const ang=rand()*Math.PI*2,rx=w.w/2+55+rand()*45,ry=w.h/2+55+rand()*45;return{x:w.x+w.w/2+Math.cos(ang)*rx,y:w.y+w.h/2+Math.sin(ang)*ry};
-}
+function waterBankPoint(z,rand){const waters=(z.water||[]).filter(Boolean);if(!waters.length)return null;const w=waters[Math.floor(rand()*waters.length)];if(w.type==='river'){const pts=w.points;if(pts.length<2)return null;const i=Math.floor(rand()*(pts.length-1)),a=pts[i],b=pts[i+1],t=.15+rand()*.7;const x=a[0]+(b[0]-a[0])*t,y=a[1]+(b[1]-a[1])*t,dx=b[0]-a[0],dy=b[1]-a[1],len=Math.max(1,Math.hypot(dx,dy)),side=rand()<.5?-1:1,offset=52+rand()*55;return{x:x+(-dy/len)*offset*side,y:y+(dx/len)*offset*side}}const ang=rand()*Math.PI*2,rx=w.w/2+55+rand()*45,ry=w.h/2+55+rand()*45;return{x:w.x+w.w/2+Math.cos(ang)*rx,y:w.y+w.h/2+Math.sin(ang)*ry}}
