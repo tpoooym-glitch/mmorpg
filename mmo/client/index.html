@@ -13,14 +13,22 @@
     <canvas id="game" width="1100" height="680"></canvas>
     <button id="debug-toggle" type="button" aria-pressed="false">DEBUG</button>
     <aside id="hud">
-      <div id="character">Adventurer · Warrior · Lv.1</div>
-      <div>HP <span id="hp">100/100</span></div>
+      <div id="character">Adventurer · Warrior</div>
+      <div class="status-row"><span>HP</span><span id="hp">140/140</span></div>
       <div class="bar"><i id="hpbar"></i></div>
-      <div>MP <span id="mp">50/50</span></div>
+      <div class="status-row"><span>MP</span><span id="mp">70/70</span></div>
       <div class="bar"><i id="mpbar"></i></div>
-      <div>Gold <span id="gold">100</span> · EXP <span id="xp">0/100</span></div>
+      <div class="status-row"><span id="level">Lv.1</span><span>Gold <b id="gold">100</b></span></div>
+      <div class="xp-label">EXP <span id="xp">0/100</span></div>
+      <div class="bar xp"><i id="xpbar"></i></div>
+      <div id="skills-title">SKILLS</div>
+      <div id="skills">
+        <div id="skill-slash" class="skill"><b>1</b><span>Slash</span><em id="cooldown-slash">READY</em></div>
+        <div id="skill-guard" class="skill"><b>2</b><span>Guard</span><em id="cooldown-guard">READY</em></div>
+      </div>
     </aside>
-    <div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1-3 สกิล · E โต้ตอบ · Q เควส · I กระเป๋า</div>
+    <div id="death-message" hidden>DEFEATED · กลับจุดเกิดในอีกไม่นาน</div>
+    <div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1 Slash · 2 Guard</div>
   </main>
 </div>
 <script type="module" src="js/main.js"></script>
