@@ -20,9 +20,8 @@ export function attack(state){
   p.attackFrame=0;
   p.attackElapsed=0;
   p.attackHitCount=0;
-  const target=findAttackTarget(state);
-  p.attackTargetId=target?.id??null;
-  applyAttackHit(state,target);
+  p.attackTarget=findAttackTarget(state);
+  applyAttackHit(state,p.attackTarget);
   p.attackHitCount=1;
   return true
 }
@@ -37,11 +36,10 @@ export function updateCombat(state,dt){
       p.attackElapsed-=1/ATTACK_FPS;
       p.attackFrame++;
       if(COMBO_HIT_FRAMES.includes(p.attackFrame)&&p.attackHitCount<2){
-        const target=p.attackTargetId==null?null:state.mobs.find(m=>m.id===p.attackTargetId);
-        applyAttackHit(state,target);
+        applyAttackHit(state,p.attackTarget);
         p.attackHitCount++;
       }
-      if(p.attackFrame>=ATTACK_FRAMES){p.attackFrame=0;p.attackAnimating=false;p.attackTargetId=null;p.attackHitCount=0;break}
+      if(p.attackFrame>=ATTACK_FRAMES){p.attackFrame=0;p.attackAnimating=false;p.attackTarget=null;p.attackHitCount=0;break}
     }
   }else if(p.moving){
     p.animElapsed+=dt;
