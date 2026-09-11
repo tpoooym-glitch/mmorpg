@@ -4,8 +4,13 @@ const HIT_COOLDOWN=.35;
 const PLAYER_IFRAME=.45;
 const ATTACK_FRAMES=8;
 const ATTACK_FPS=12;
+const COMBO_HIT_FRAMES=[2,6];
 
 function rewardPlayer(state,mob){const gold=Math.floor(mob.gold[0]+Math.random()*(mob.gold[1]-mob.gold[0]+1));state.player.xp+=mob.exp;state.player.gold+=gold;while(state.player.xp>=100){state.player.xp-=100;state.player.level++;state.player.maxHp+=10;state.player.maxMp+=5;state.player.hp=state.player.maxHp;state.player.mp=state.player.maxMp}}
+
+function findAttackTarget(state){const p=state.player;let target=null,best=Infinity;for(const m of state.mobs){if(!m.alive||m.hp<=0)continue;const d=dist(m.x,m.y,p.x,p.y);if(d<=p.attackRange+m.r&&d<best){best=d;target=m}}return target}
+
+function applyAttackHit(state,target){if(!target||!target.alive||target.hp<=0)return;const p=state.player;const damage=Math.max(1,p.attackDamage-target.defense);target.hp-=damage;if(target.hp<=0){target.hp=0;target.alive=false;target.respawnAt=performance.now()+target.respawnMs;rewardPlayer(state,target)}}
 
 export function attack(state){
   const p=state.player;
@@ -14,12 +19,11 @@ export function attack(state){
   p.attackAnimating=true;
   p.attackFrame=0;
   p.attackElapsed=0;
-  let target=null,best=Infinity;
-  for(const m of state.mobs){if(!m.alive||m.hp<=0)continue;const d=dist(m.x,m.y,p.x,p.y);if(d<=p.attackRange+m.r&&d<best){best=d;target=m}}
-  if(!target)return true;
-  const damage=Math.max(1,p.attackDamage-target.defense);
-  target.hp-=damage;
-  if(target.hp<=0){target.hp=0;target.alive=false;target.respawnAt=performance.now()+target.respawnMs;rewardPlayer(state,target)}
+  p.attackHitCount=0;
+  const target=findAttackTarget(state);
+  p.attackTargetId=target?.id??null;
+  applyAttackHit(state,target);
+  p.attackHitCount=1;
   return true
 }
 
@@ -32,7 +36,12 @@ export function updateCombat(state,dt){
     while(p.attackElapsed>=1/ATTACK_FPS){
       p.attackElapsed-=1/ATTACK_FPS;
       p.attackFrame++;
-      if(p.attackFrame>=ATTACK_FRAMES){p.attackFrame=0;p.attackAnimating=false;break}
+      if(COMBO_HIT_FRAMES.includes(p.attackFrame)&&p.attackHitCount<2){
+        const target=p.attackTargetId==null?null:state.mobs.find(m=>m.id===p.attackTargetId);
+        applyAttackHit(state,target);
+        p.attackHitCount++;
+      }
+      if(p.attackFrame>=ATTACK_FRAMES){p.attackFrame=0;p.attackAnimating=false;p.attackTargetId=null;p.attackHitCount=0;break}
     }
   }else if(p.moving){
     p.animElapsed+=dt;
