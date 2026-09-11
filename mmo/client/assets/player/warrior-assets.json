@@ -1,0 +1,23 @@
+{
+  "class": "Warrior",
+  "frameWidth": 48,
+  "frameHeight": 48,
+  "displayWidth": 96,
+  "displayHeight": 96,
+  "directions": 8,
+  "walk": {
+    "file": "warrior-walk.png",
+    "columns": 4,
+    "rows": 8,
+    "fps": 10
+  },
+  "attack": {
+    "file": "warrior-attack.png",
+    "columns": 8,
+    "rows": 8,
+    "fps": 12,
+    "comboHits": 2
+  },
+  "alpha": "transparent",
+  "requiredFiles": ["warrior-walk.png", "warrior-attack.png"]
+}
