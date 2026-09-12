@@ -1,7 +1,7 @@
 {
   "id": "emerald-vales",
   "name": "Emerald Vales",
-  "version": 7,
+  "version": 8,
   "tileSize": 32,
   "width": 6400,
   "height": 4800,
@@ -37,10 +37,10 @@
   ],
   "bridges": [],
   "structures": [
-    { "id": "adventurer-house", "type": "adventurer-house", "x": 2350, "y": 1780, "w": 520, "h": 360, "door": { "x": 2350, "y": 1970 } },
-    { "id": "blacksmith", "type": "blacksmith", "x": 3970, "y": 1780, "w": 420, "h": 400, "door": { "x": 3970, "y": 1990 } },
-    { "id": "villager-house", "type": "villager-house", "x": 2350, "y": 2740, "w": 520, "h": 330, "door": { "x": 2350, "y": 2570 } },
-    { "id": "general-store", "type": "general-store", "x": 3970, "y": 2740, "w": 520, "h": 350, "door": { "x": 3970, "y": 2570 } }
+    { "id": "adventurer-house", "type": "adventurer-house", "x": 2350, "y": 1780, "w": 380, "h": 300, "door": { "x": 2350, "y": 1970 } },
+    { "id": "blacksmith", "type": "blacksmith", "x": 3970, "y": 1780, "w": 320, "h": 390, "door": { "x": 3970, "y": 1990 } },
+    { "id": "villager-house", "type": "villager-house", "x": 2350, "y": 2740, "w": 380, "h": 270, "door": { "x": 2350, "y": 2570 } },
+    { "id": "general-store", "type": "general-store", "x": 3970, "y": 2740, "w": 390, "h": 300, "door": { "x": 3970, "y": 2570 } }
   ],
   "resources": [
     { "id": "herb-patch-1", "type": "herb", "x": 1500, "y": 1800 },
