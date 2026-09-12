@@ -1,8 +1,8 @@
 const defs={
-  'adventurer-house':{asset:'assets/buildings/adventurer-guild-topdown.png',tone:'#8f5b37'},
-  'villager-house':{asset:'assets/buildings/villager-house-topdown.png',tone:'#a66a3d'},
-  blacksmith:{asset:'assets/buildings/blacksmith-shop-topdown.png',tone:'#70452f'},
-  'general-store':{asset:'assets/buildings/general-store-topdown.png',tone:'#9b6338'},
+  'adventurer-house':{asset:'assets/buildings/adventurer-guild-topdown.png',tone:'#8f5b37',box:[456,219,1461,1076]},
+  'villager-house':{asset:'assets/buildings/villager-house-topdown.png',tone:'#a66a3d',box:[315,223,1605,1085]},
+  blacksmith:{asset:'assets/buildings/blacksmith-shop-topdown.png',tone:'#70452f',box:[269,57,1381,1421]},
+  'general-store':{asset:'assets/buildings/general-store-topdown.png',tone:'#9b6338',box:[417,243,1531,1085]},
   well:{asset:'assets/buildings/well-topdown.png',tone:'#8a8a86'}
 };
 const imageCache=new Map();
@@ -37,9 +37,10 @@ function drawOne(ctx,state,s){
   const x=s.x-state.cam.x,y=s.y-state.cam.y,img=getImage(d.asset);
   ctx.save();ctx.translate(Math.round(x),Math.round(y));ctx.imageSmoothingEnabled=false;
   if(img.complete&&img.naturalWidth){
-    const scale=Math.min(s.w/img.naturalWidth,s.h/img.naturalHeight);
-    const dw=Math.round(img.naturalWidth*scale),dh=Math.round(img.naturalHeight*scale);
-    ctx.drawImage(img,Math.round(-dw/2),Math.round(-dh/2),dw,dh);
+    const box=d.box,[bx,by,bx2,by2]=box||[0,0,img.naturalWidth,img.naturalHeight],bw=bx2-bx,bh=by2-by;
+    const scale=Math.min(s.w/bw,s.h/bh);
+    const dw=Math.round(bw*scale),dh=Math.round(bh*scale);
+    ctx.drawImage(img,bx,by,bw,bh,Math.round(-dw/2),Math.round(-dh/2),dw,dh);
   }else drawFallback(ctx,s);
   ctx.restore();
 }
