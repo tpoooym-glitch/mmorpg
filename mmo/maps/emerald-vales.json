@@ -1,73 +1,45 @@
 {
-  "id": "emerald-vales",
-  "name": "Emerald Vales",
-  "version": 8,
-  "tileSize": 32,
-  "width": 6400,
-  "height": 4800,
-  "spawn": { "x": 3200, "y": 2400 },
-  "terrain": {
-    "base": "grass",
-    "regions": [
-      { "id": "north-forest", "type": "forest", "x": 0, "y": 0, "w": 6400, "h": 1200 },
-      { "id": "west-forest-edge", "type": "forest", "x": 0, "y": 1200, "w": 520, "h": 3600 },
-      { "id": "east-forest-edge", "type": "forest", "x": 5880, "y": 1200, "w": 520, "h": 3600 },
-      { "id": "west-meadow", "type": "grass", "x": 520, "y": 1200, "w": 1280, "h": 2200 },
-      { "id": "central-village", "type": "grass", "x": 1800, "y": 1200, "w": 2800, "h": 2200 },
-      { "id": "east-meadow", "type": "grass", "x": 4600, "y": 1200, "w": 1280, "h": 2200 },
-      { "id": "south-forest", "type": "forest", "x": 0, "y": 3400, "w": 6400, "h": 1400 }
-    ]
-  },
-  "water": [
-    { "id": "forest-pond", "type": "pond", "x": 4920, "y": 700, "w": 600, "h": 420, "ecosystem": "forest-pond" }
-  ],
-  "ecosystem": {
-    "forest": { "vegetation": ["trees", "bushes", "grass", "rocks"] },
-    "meadow": { "vegetation": ["grass", "small_plants", "flowers", "bushes"] },
-    "village": { "vegetation": ["grass", "small_plants", "flowers", "bushes"] }
-  },
-  "roads": [
-    { "id": "village-main", "points": [[3200, 1200], [3200, 2400], [3200, 3300]] },
-    { "id": "village-west", "points": [[1800, 2400], [3200, 2400]] },
-    { "id": "village-east", "points": [[3200, 2400], [4600, 2400]] },
-    { "id": "adventurer-path", "points": [[2350, 2050], [2350, 2400]] },
-    { "id": "villager-path", "points": [[2350, 2575], [2350, 2400]] },
-    { "id": "blacksmith-path", "points": [[3970, 2050], [3970, 2400]] },
-    { "id": "store-path", "points": [[3970, 2575], [3970, 2400]] }
-  ],
-  "bridges": [],
-  "structures": [
-    { "id": "adventurer-house", "type": "adventurer-house", "x": 2350, "y": 1780, "w": 380, "h": 300, "door": { "x": 2350, "y": 1970 } },
-    { "id": "blacksmith", "type": "blacksmith", "x": 3970, "y": 1780, "w": 320, "h": 390, "door": { "x": 3970, "y": 1990 } },
-    { "id": "villager-house", "type": "villager-house", "x": 2350, "y": 2740, "w": 380, "h": 270, "door": { "x": 2350, "y": 2570 } },
-    { "id": "general-store", "type": "general-store", "x": 3970, "y": 2740, "w": 390, "h": 300, "door": { "x": 3970, "y": 2570 } }
-  ],
-  "resources": [
-    { "id": "herb-patch-1", "type": "herb", "x": 1500, "y": 1800 },
-    { "id": "herb-patch-2", "type": "herb", "x": 5000, "y": 1900 },
-    { "id": "ore-node-1", "type": "ore", "x": 1100, "y": 2800 },
-    { "id": "ore-node-2", "type": "ore", "x": 5300, "y": 2800 }
-  ],
-  "landmarks": [
-    { "id": "village-spawn", "type": "spawn", "x": 3200, "y": 2400, "target": null },
-    { "id": "forest-gate", "type": "entrance", "x": 3200, "y": 1200, "target": "whispering-woods" }
-  ],
-  "collision": {
-    "default": "walkable",
-    "blocked": ["tree", "bush", "large_rock", "house", "village", "mountain_edge", "large_water_debris"],
-    "walkableDecor": ["grass_tuft", "small_plant", "flower", "reed", "lily_pad", "small_branch"],
-    "water": "slow",
-    "deepWater": "danger",
-    "bridge": "walkable",
-    "road": "walkable"
-  },
-  "movement": {
-    "grassMultiplier": 1.0,
-    "forestMultiplier": 0.85,
-    "swampMultiplier": 0.65,
-    "waterMultiplier": 0.45,
-    "roadMultiplier": 1.15,
-    "bridgeMultiplier": 1.0
-  },
-  "recommendedLevel": { "min": 1, "max": 5 }
+ "id": "emerald-vales",
+ "name": "Emerald Vales",
+ "version": 9,
+ "tileSize": 32,
+ "width": 6400,
+ "height": 4800,
+ "spawn": {
+  "x": 3200,
+  "y": 2400
+ },
+ "terrain": {
+  "base": "grass",
+  "regions": [
+   {"id":"north-forest","type":"forest","x":0,"y":0,"w":6400,"h":1200},
+   {"id":"west-meadow","type":"grass","x":520,"y":1200,"w":1280,"h":2200},
+   {"id":"central-village","type":"grass","x":1800,"y":1200,"w":2800,"h":2200},
+   {"id":"east-meadow","type":"grass","x":4600,"y":1200,"w":1280,"h":2200}
+  ]
+ },
+ "water":[{"id":"south-river","type":"river","ecosystem":"river","points":[[-60,4560],[1600,4515],[3200,4585],[4800,4520],[6460,4565]]}],
+ "ecosystem":{"forest":{"vegetation":["trees","bushes","grass","rocks"]},"meadow":{"vegetation":["grass","small_plants","flowers","bushes"]},"village":{"vegetation":["grass","small_plants","flowers","bushes"]}},
+ "roads":[
+  {"id":"village-main","points":[[3200,1200],[3200,2400],[3200,3300],[3200,4460]]},
+  {"id":"village-west","points":[[1800,2400],[3200,2400]]},
+  {"id":"village-east","points":[[3200,2400],[4600,2400]]},
+  {"id":"adventurer-path","points":[[2350,2050],[2350,2400]]},
+  {"id":"villager-path","points":[[2350,2575],[2350,2400]]},
+  {"id":"blacksmith-path","points":[[3970,2050],[3970,2400]]},
+  {"id":"store-path","points":[[3970,2575],[3970,2400]]}
+ ],
+ "bridges":[],
+ "structures":[
+  {"id":"adventurer-house","type":"adventurer-house","x":2350,"y":1780,"w":380,"h":300,"door":{"x":2350,"y":1970}},
+  {"id":"blacksmith","type":"blacksmith","x":3970,"y":1780,"w":320,"h":390,"door":{"x":3970,"y":1990}},
+  {"id":"villager-house","type":"villager-house","x":2350,"y":2740,"w":380,"h":270,"door":{"x":2350,"y":2570}},
+  {"id":"general-store","type":"general-store","x":3970,"y":2740,"w":390,"h":300,"door":{"x":3970,"y":2570}},
+  {"id":"village-well","type":"well","x":3200,"y":3850,"w":130,"h":130,"door":null}
+ ],
+ "resources":[{"id":"herb-patch-1","type":"herb","x":1500,"y":1800},{"id":"herb-patch-2","type":"herb","x":5000,"y":1900},{"id":"ore-node-1","type":"ore","x":1100,"y":2800},{"id":"ore-node-2","type":"ore","x":5300,"y":2800}],
+ "landmarks":[{"id":"village-spawn","type":"spawn","x":3200,"y":2400,"target":null},{"id":"forest-gate","type":"entrance","x":3200,"y":1200,"target":"whispering-woods"}],
+ "collision":{"default":"walkable","blocked":["tree","bush","large_rock","house","village","mountain_edge","large_water_debris"],"walkableDecor":["grass_tuft","small_plant","flower","reed","lily_pad","small_branch"],"water":"slow","deepWater":"danger","bridge":"walkable","road":"walkable"},
+ "movement":{"grassMultiplier":1.0,"forestMultiplier":0.85,"swampMultiplier":0.65,"waterMultiplier":0.45,"roadMultiplier":1.15,"bridgeMultiplier":1.0},
+ "recommendedLevel":{"min":1,"max":5}
 }

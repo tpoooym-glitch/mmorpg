@@ -2,11 +2,25 @@ const defs={
   'adventurer-house':{asset:'assets/buildings/adventurer-guild-topdown.png',tone:'#8f5b37'},
   'villager-house':{asset:'assets/buildings/villager-house-topdown.png',tone:'#a66a3d'},
   blacksmith:{asset:'assets/buildings/blacksmith-shop-topdown.png',tone:'#70452f'},
-  'general-store':{asset:'assets/buildings/general-store-topdown.png',tone:'#9b6338'}
+  'general-store':{asset:'assets/buildings/general-store-topdown.png',tone:'#9b6338'},
+  well:{asset:'assets/buildings/well-topdown.png',tone:'#8a8a86'}
 };
 const imageCache=new Map();
 function getImage(src){if(imageCache.has(src))return imageCache.get(src);const img=new Image();img.src=src;imageCache.set(src,img);return img}
+function drawWellFallback(ctx,s){
+  const r=Math.min(s.w,s.h)*.34;
+  ctx.save();ctx.imageSmoothingEnabled=false;
+  ctx.fillStyle='#5b5b58';ctx.beginPath();ctx.ellipse(0,r*.25,r*1.12,r*.62,0,0,Math.PI*2);ctx.fill();
+  ctx.fillStyle='#8f8f8a';ctx.strokeStyle='#3a3a37';ctx.lineWidth=4;
+  ctx.beginPath();ctx.ellipse(0,0,r,r*.6,0,0,Math.PI*2);ctx.fill();ctx.stroke();
+  ctx.fillStyle='#2c3a44';ctx.beginPath();ctx.ellipse(0,0,r*.68,r*.4,0,0,Math.PI*2);ctx.fill();
+  ctx.strokeStyle='#6b4a30';ctx.lineWidth=6;
+  ctx.beginPath();ctx.moveTo(-r*1.05,-r*.55);ctx.lineTo(-r*1.05,-r*1.9);ctx.moveTo(r*1.05,-r*.55);ctx.lineTo(r*1.05,-r*1.9);ctx.stroke();
+  ctx.fillStyle='#7a4a2c';ctx.beginPath();ctx.moveTo(-r*1.35,-r*1.85);ctx.lineTo(0,-r*2.55);ctx.lineTo(r*1.35,-r*1.85);ctx.closePath();ctx.fill();ctx.stroke();
+  ctx.restore();
+}
 function drawFallback(ctx,s){
+  if(s.type==='well'){drawWellFallback(ctx,s);return}
   const w=Math.min(s.w,360),h=Math.min(s.h,300);
   ctx.save();ctx.imageSmoothingEnabled=false;
   ctx.fillStyle='#6b442d';ctx.strokeStyle='#2b211b';ctx.lineWidth=5;
