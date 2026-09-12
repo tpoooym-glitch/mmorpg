@@ -1,4 +1,4 @@
-import {drawSourceSprite,getAlphaBounds} from './sprite-atlas.js';
+import {drawSourceSprite} from './sprite-atlas.js';
 const locationSrc='assets/buildings/village-locations-20-asset-set.png';
 const fenceSrc='assets/buildings/village-fence-asset-set.png';
 const defs={
@@ -24,7 +24,7 @@ const defs={
 };
 const cache=new Map();
 function image(src){if(cache.has(src))return cache.get(src);const img=new Image();img.decoding='async';img.src=src;cache.set(src,img);return img}
-function standalone(ctx,img,s){return drawSourceSprite(ctx,img,getAlphaBounds(img),{w:s.w,h:s.h})}
+function standalone(ctx,img,s){if(!img?.complete||!img.naturalWidth)return false;return drawSourceSprite(ctx,img,{x:0,y:0,w:img.naturalWidth,h:img.naturalHeight},{w:s.w,h:s.h})}
 function grid(ctx,img,index,cols,rows,s){const cw=img.naturalWidth/cols,ch=img.naturalHeight/rows,c=index%(cols*rows),sx=(c%cols)*cw,sy=Math.floor(c/cols)*ch;return drawSourceSprite(ctx,img,{x:sx,y:sy,w:cw,h:ch},{w:s.w,h:s.h})}
 function farm(ctx,s){const img=image(locationSrc);if(!img.complete||!img.naturalWidth)return false;const src={x:1080,y:736,w:292,h:308},tw=s.w/2,th=s.h/2;for(let row=0;row<2;row++)for(let col=0;col<2;col++){ctx.save();ctx.translate(-s.w/2+tw/2+col*tw,-s.h/2+th/2+row*th);drawSourceSprite(ctx,img,src,{w:tw+3,h:th+3});ctx.restore()}return true}
 function fence(ctx,s){const img=image(fenceSrc);if(!img.complete||!img.naturalWidth)return false;const src={x:60,y:364,w:392,h:204};if(s.fenceKind==='vertical')return drawSourceSprite(ctx,img,src,{w:s.h+10,h:s.w+4},Math.PI/2);return drawSourceSprite(ctx,img,src,{w:s.w+10,h:s.h+4})}
