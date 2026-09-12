@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arelia Online</title>
-<link rel="stylesheet" href="css/style.css">
+<link rel="stylesheet" href="css/style.css?v=20260912-2">
 </head>
 <body>
 <div id="app">
@@ -29,8 +29,13 @@
     </aside>
     <div id="death-message" hidden>DEFEATED · กลับจุดเกิดในอีกไม่นาน</div>
     <div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1 Slash · 2 Guard</div>
+    <div id="boot-error" hidden></div>
   </main>
 </div>
-<script type="module" src="js/main.js?v=20260912-1"></script>
+<script>
+window.addEventListener('error',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.message||'Unknown error')});
+window.addEventListener('unhandledrejection',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.reason?.message||e.reason||'Unhandled promise rejection')});
+</script>
+<script type="module" src="js/main.js?v=20260912-2"></script>
 </body>
 </html>
