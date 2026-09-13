@@ -6,7 +6,7 @@ import {createMobs} from './entities/mob-factory.js?v=20260913-1';
 import {move} from './systems/movement-system.js';
 import {attack,useSkill,updateCombat} from './systems/combat-system.js';
 import {loadAssets} from './render/asset-loader.js';
-import {drawScene} from './render/canvas-renderer.js?v=20260913-1';
+import {drawScene} from './render/canvas-renderer.js?v=20260913-2';
 import {drawStructures} from './render/structure-renderer.js?v=20260913-1';
 import {drawActorsOverlay} from './render/actor-overlay.js?v=20260913-1';
 import {updateHud} from './ui/hud.js';
