@@ -1,78 +1,16 @@
 import {clamp} from '../core/utils.js';
 import {drawGridSprite} from './sprite-atlas.js';
-
-function hash2(x,y,seed=1){let h=Math.imul(x|0,374761393)^Math.imul(y|0,668265263)^Math.imul(seed|0,1442695041);h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return (h>>>0)/4294967296}
+function hash2(x,y,seed=1){let h=Math.imul(x|0,374761393)^Math.imul(y|0,668265263)^Math.imul(seed|0,1442695041);h=Math.imul(h^(h>>>13),1274126177);h^=h>>>16;return(h>>>0)/4294967296}
 function smooth(t){return t*t*(3-2*t)}
 function valueNoise(x,y,cell,seed){const gx=x/cell,gy=y/cell,x0=Math.floor(gx),y0=Math.floor(gy),x1=x0+1,y1=y0+1,sx=smooth(gx-x0),sy=smooth(gy-y0);const n00=hash2(x0,y0,seed),n10=hash2(x1,y0,seed),n01=hash2(x0,y1,seed),n11=hash2(x1,y1,seed);const nx0=n00+(n10-n00)*sx,nx1=n01+(n11-n01)*sx;return nx0+(nx1-nx0)*sy}
 function regionAt(z,x,y){for(let i=(z.terrain?.regions||[]).length-1;i>=0;i--){const r=z.terrain.regions[i];if(x>=r.x&&x<=r.x+r.w&&y>=r.y&&y<=r.y+r.h)return r.type}return z.terrain?.base||'grass'}
-
-// Real crops from terrain-tileset-20-village.png; the source crops avoid its baked grid.
-const GRASS_SRC=[{x:46,y:46,w:276,h:276},{x:395,y:46,w:276,h:276},{x:742,y:46,w:276,h:276}];
-const DIRT_SRC=[{x:1090,y:46,w:276,h:276},{x:1439,y:46,w:276,h:276}];
-
-function drawGround(ctx,state,assets){
-  const img=assets.terrainVillage;
-  if(!img?.complete||!img.naturalWidth){ctx.fillStyle='#5a8a45';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);return}
-  const size=32,camX=Math.round(state.cam.x),camY=Math.round(state.cam.y);
-  const startX=Math.floor(camX/size)*size-size,startY=Math.floor(camY/size)*size-size,endX=camX+ctx.canvas.width+size,endY=camY+ctx.canvas.height+size;
-  ctx.save();ctx.imageSmoothingEnabled=true;
-  for(let wy=startY;wy<endY;wy+=size)for(let wx=startX;wx<endX;wx+=size){
-    const region=regionAt(state.zone,wx+16,wy+16),dirt=region==='dirt';
-    const set=dirt?DIRT_SRC:GRASS_SRC,n=valueNoise(wx,wy,dirt?150:220,dirt?51:19),idx=Math.min(set.length-1,Math.floor(n*set.length));
-    const s=set[idx],flip=hash2(Math.floor(wx/size),Math.floor(wy/size),909)<.5,sx=wx-camX,sy=wy-camY;
-    if(flip){ctx.save();ctx.translate(Math.round(sx+size),Math.round(sy));ctx.scale(-1,1);ctx.drawImage(img,s.x,s.y,s.w,s.h,0,0,size+1,size+1);ctx.restore()}
-    else ctx.drawImage(img,s.x,s.y,s.w,s.h,Math.round(sx),Math.round(sy),size+1,size+1)
-  }
-  ctx.restore()
-}
-
-// Road geometry is rendered only from the road tileset image, never with ctx.stroke().
-// Straight road body and rounded cap are real crops from road-tileset-topdown.png.
-const ROAD_BODY_SRC={x:55,y:88,w:240,h:120};
-const ROAD_CAP_SRC={x:1374,y:285,w:135,h:236};
-const ROAD_CROSS_SRC={x:652,y:24,w:296,h:242};
-function roadSegment(ctx,img,a,b,width,cam){
-  const dx=b[0]-a[0],dy=b[1]-a[1],len=Math.hypot(dx,dy);if(len<1)return;
-  const angle=Math.atan2(dy,dx),cx=(a[0]+b[0])/2-cam.x,cy=(a[1]+b[1])/2-cam.y;
-  ctx.save();ctx.translate(Math.round(cx),Math.round(cy));ctx.rotate(angle);ctx.imageSmoothingEnabled=false;
-  ctx.drawImage(img,ROAD_BODY_SRC.x,ROAD_BODY_SRC.y,ROAD_BODY_SRC.w,ROAD_BODY_SRC.h,-len/2,-width/2,len,width);
-  if(len>width){
-    const capW=Math.min(width*1.45,len/2);
-    ctx.drawImage(img,ROAD_CAP_SRC.x,ROAD_CAP_SRC.y,ROAD_CAP_SRC.w,ROAD_CAP_SRC.h,-len/2,-width/2,capW,width);
-    ctx.save();ctx.scale(-1,1);ctx.drawImage(img,ROAD_CAP_SRC.x,ROAD_CAP_SRC.y,ROAD_CAP_SRC.w,ROAD_CAP_SRC.h,-len/2,-width/2,capW,width);ctx.restore();
-  }
-  ctx.restore();
-}
-function drawRoads(ctx,state,assets){
-  const img=assets.roadTiles;if(!img?.complete||!img.naturalWidth)return;
-  for(const r of state.zone.roads||[]){
-    const pts=r.points||[];if(pts.length<2)continue;const width=r.width||82;
-    for(let i=0;i<pts.length-1;i++)roadSegment(ctx,img,pts[i],pts[i+1],width,state.cam);
-    if(pts.length>2){
-      for(let i=1;i<pts.length-1;i++){
-        const p=pts[i],s=Math.max(64,width*1.08);
-        ctx.save();ctx.translate(Math.round(p[0]-state.cam.x),Math.round(p[1]-state.cam.y));ctx.imageSmoothingEnabled=false;ctx.drawImage(img,ROAD_CROSS_SRC.x,ROAD_CROSS_SRC.y,ROAD_CROSS_SRC.w,ROAD_CROSS_SRC.h,-s/2,-s/2,s,s);ctx.restore();
-      }
-    }
-  }
-}
-function drawBridges(ctx,state,assets){
-  const img=assets.bridge;
-  for(const b of state.zone.bridges||[]){
-    const x=b.x-state.cam.x,y=b.y-state.cam.y;
-    if(img?.complete&&img.naturalWidth){
-      const src={x:46,y:76,w:565,h:285},vertical=b.h>b.w;
-      ctx.save();ctx.translate(Math.round(x+b.w/2),Math.round(y+b.h/2));ctx.imageSmoothingEnabled=true;
-      if(vertical)ctx.rotate(Math.PI/2);
-      const dw=vertical?b.h:b.w,dh=vertical?b.w:b.h;
-      ctx.drawImage(img,src.x,src.y,src.w,src.h,Math.round(-dw/2),Math.round(-dh/2),dw,dh);ctx.restore()
-    }else{ctx.fillStyle='#8d6045';ctx.fillRect(x,y,b.w,b.h)}
-  }
-}
-function drawRoadsAndBridges(ctx,state,assets){drawRoads(ctx,state,assets);drawBridges(ctx,state,assets)}
+const GRASS_SRC=[{x:46,y:46,w:276,h:276},{x:395,y:46,w:276,h:276},{x:742,y:46,w:276,h:276}],DIRT_SRC=[{x:1090,y:46,w:276,h:276},{x:1439,y:46,w:276,h:276}];
+function dirtRegion(z){return(z.terrain?.regions||[]).find(r=>r.id==='village-square'&&r.type==='dirt')||null}
+function dirtBlend(z,x,y){const r=dirtRegion(z);if(!r)return 0;const edge=Math.min(x-r.x,r.x+r.w-x,y-r.y,r.y+r.h-y);if(edge>=72)return 1;if(edge<=0)return 0;const n=valueNoise(x,y,110,133);return n>(1-edge/72)?.72:0}
+function drawGround(ctx,state,assets){const img=assets.terrainVillage;if(!img?.complete||!img.naturalWidth){ctx.fillStyle='#5a8a45';ctx.fillRect(0,0,ctx.canvas.width,ctx.canvas.height);return}const size=32,camX=Math.round(state.cam.x),camY=Math.round(state.cam.y),startX=Math.floor(camX/size)*size-size,startY=Math.floor(camY/size)*size-size,endX=camX+ctx.canvas.width+size,endY=camY+ctx.canvas.height+size;ctx.save();ctx.imageSmoothingEnabled=true;for(let wy=startY;wy<endY;wy+=size)for(let wx=startX;wx<endX;wx+=size){const cx=wx+16,cy=wy+16,isDirt=regionAt(state.zone,cx,cy)==='dirt'&&dirtBlend(state.zone,cx,cy)>0.5,set=isDirt?DIRT_SRC:GRASS_SRC,n=valueNoise(wx,wy,isDirt?150:220,isDirt?51:19),idx=Math.min(set.length-1,Math.floor(n*set.length)),s=set[idx],flip=hash2(Math.floor(wx/size),Math.floor(wy/size),909)<.5,sx=wx-camX,sy=wy-camY;if(flip){ctx.save();ctx.translate(Math.round(sx+size),Math.round(sy));ctx.scale(-1,1);ctx.drawImage(img,s.x,s.y,s.w,s.h,0,0,size+1,size+1);ctx.restore()}else ctx.drawImage(img,s.x,s.y,s.w,s.h,Math.round(sx),Math.round(sy),size+1,size+1)}ctx.restore()}
 function drawWater(ctx,state,assets){const img=assets.riverShore||assets.riverTiles;if(!img?.complete||!img.naturalWidth)return;ctx.save();ctx.lineCap='round';ctx.lineJoin='round';for(const w of state.zone.water||[]){if(w.type==='river'&&w.points?.length>1){const pts=w.points.map(p=>[p[0]-state.cam.x,p[1]-state.cam.y]),width=w.width||170;ctx.strokeStyle='#c9a86a';ctx.lineWidth=width+40;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke();ctx.strokeStyle='#4f9ee8';ctx.lineWidth=width;ctx.beginPath();pts.forEach((p,i)=>i?ctx.lineTo(p[0],p[1]):ctx.moveTo(p[0],p[1]));ctx.stroke()}else if(w.type==='pond'){const cx=w.x+w.w/2-state.cam.x,cy=w.y+w.h/2-state.cam.y;ctx.fillStyle='#c9a86a';ctx.beginPath();ctx.ellipse(cx,cy,w.w/2+18,w.h/2+18,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#4f9ee8';ctx.beginPath();ctx.ellipse(cx,cy,w.w/2,w.h/2,0,0,Math.PI*2);ctx.fill()}}ctx.restore()}
 function drawNature(ctx,state,assets){for(const o of state.decor||[]){const x=o.x-state.cam.x,y=o.y-state.cam.y;if(x<-o.w-80||y<-o.h-80||x>ctx.canvas.width+o.w+80||y>ctx.canvas.height+o.h+80)continue;if(o.type?.startsWith('grass')&&assets.grassDecor?.complete){const n=Math.max(0,Math.min(11,Number(o.type.slice(5))-1)),sx=(n%6)*48,sy=Math.floor(n/6)*48;ctx.save();ctx.imageSmoothingEnabled=false;ctx.drawImage(assets.grassDecor,sx,sy,48,48,x-o.w/2,y-o.h,o.w,o.h);ctx.restore();continue}if(['oakLarge','oakMedium','pineLarge','pineMedium'].includes(o.type)){const img=assets[{oakLarge:'oakLarge',oakMedium:'oakMedium',pineLarge:'pineLarge',pineMedium:'pineMedium'}[o.type]];if(img?.complete)ctx.drawImage(img,0,0,img.naturalWidth,img.naturalHeight,x-o.w/2,y-o.h,o.w,o.h)}}}
 function drawPlayer(ctx,state,assets){const p=state.player,x=p.x-state.cam.x,y=p.y-state.cam.y,walk=assets.warriorWalk,atk=assets.warriorAttack;ctx.save();ctx.imageSmoothingEnabled=false;let drawn=false;if(p.attackAnimating&&atk?.complete){drawn=drawGridSprite(ctx,atk,Math.max(0,Math.min(63,p.attackFrame+Math.max(0,Math.min(7,p.facing))*8)),8,8,{w:96,h:96})}else if(walk?.complete){drawn=drawGridSprite(ctx,walk,Math.max(0,Math.min(31,Math.floor(p.animFrame)%4+Math.max(0,Math.min(7,p.facing))*4)),4,8,{w:96,h:96})}if(drawn){ctx.translate(Math.round(x),Math.round(y+10));ctx.restore();return}ctx.fillStyle='#2b3b46';ctx.beginPath();ctx.ellipse(x,y+9,15,8,0,0,Math.PI*2);ctx.fill();ctx.fillStyle='#3b5f8a';ctx.fillRect(x-11,y-19,22,24);ctx.fillStyle='#d7dee8';ctx.beginPath();ctx.arc(x,y-25,9,0,Math.PI*2);ctx.fill();ctx.restore()}
 function drawMobs(ctx,state){for(const m of state.mobs||[]){if(m.hp<=0)continue;const x=m.x-state.cam.x,y=m.y-state.cam.y;ctx.save();ctx.fillStyle=m.kind==='boar'?'#8e694c':'#77d66a';ctx.beginPath();ctx.arc(x,y,m.r||18,0,Math.PI*2);ctx.fill();ctx.strokeStyle='#2d432d';ctx.lineWidth=3;ctx.stroke();ctx.fillStyle='#f3e0bf';ctx.fillRect(x-16,y-(m.r||18)-10,32,4);ctx.fillStyle='#e84b55';ctx.fillRect(x-16,y-(m.r||18)-10,32*Math.max(0,m.hp/m.maxHp),4);ctx.restore()}}
 function drawDebugHitboxes(ctx,state){if(!state.debug?.hitboxes)return;ctx.save();ctx.strokeStyle='rgba(255,80,80,.9)';ctx.lineWidth=2;for(const o of state.zone?.structures||[]){if(!o.blocked)continue;ctx.strokeRect(o.x-o.w/2-state.cam.x,o.y-o.h/2-state.cam.y,o.w,o.h)}const p=state.player,h=p.hitbox||{radius:p.r||8,offsetX:0,offsetY:12};ctx.strokeStyle='rgba(255,220,80,.95)';ctx.beginPath();ctx.arc(p.x+h.offsetX-state.cam.x,p.y+h.offsetY-state.cam.y,h.radius,0,Math.PI*2);ctx.stroke();ctx.restore()}
-export function drawScene(ctx,state,assets){const z=state.zone,p=state.player;if(!z)return;state.cam.x=clamp(p.x-ctx.canvas.width/2,0,Math.max(0,z.width-ctx.canvas.width));state.cam.y=clamp(p.y-ctx.canvas.height/2,0,Math.max(0,z.height-ctx.canvas.height));ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);drawGround(ctx,state,assets);drawWater(ctx,state,assets);drawRoadsAndBridges(ctx,state,assets);drawNature(ctx,state,assets);drawMobs(ctx,state);drawPlayer(ctx,state,assets);drawDebugHitboxes(ctx,state);ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText(z.name||'Emerald Vales',18,28);if(state.error){ctx.font='12px system-ui';ctx.fillText(state.error,18,48)}}
+export function drawScene(ctx,state,assets){const z=state.zone,p=state.player;if(!z)return;state.cam.x=clamp(p.x-ctx.canvas.width/2,0,Math.max(0,z.width-ctx.canvas.width));state.cam.y=clamp(p.y-ctx.canvas.height/2,0,Math.max(0,z.height-ctx.canvas.height));ctx.clearRect(0,0,ctx.canvas.width,ctx.canvas.height);drawGround(ctx,state,assets);drawWater(ctx,state,assets);drawNature(ctx,state,assets);drawMobs(ctx,state);drawPlayer(ctx,state,assets);drawDebugHitboxes(ctx,state);ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText(z.name||'Emerald Vales',18,28);if(state.error){ctx.font='12px system-ui';ctx.fillText(state.error,18,48)}}
