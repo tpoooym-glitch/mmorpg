@@ -6,6 +6,7 @@ import {createQuestManager} from './quest/quest-manager.js?v=20260915-3';
 import {initQuestUI} from './ui/quest-ui-v3.js?v=20260915-1';
 import {createNpcInteraction} from './npc/npc-interaction.js?v=20260915-1';
 import {createResourceInteraction} from './resource/resource-interaction.js?v=20260915-1';
+import {createDeliveryInteraction} from './delivery/delivery-interaction.js?v=20260915-1';
 import {createMobs} from './entities/mob-factory.js?v=20260914-1';
 import {move} from './systems/movement-system.js';
 import {attack,useSkill,updateCombat} from './systems/combat-system.js?v=20260915-2';
@@ -21,9 +22,11 @@ const debugToggle=document.querySelector('#debug-toggle');
 const interactHint=document.querySelector('#npc-interact');
 let npcInteraction=null;
 let resourceInteraction=null;
+let deliveryInteraction=null;
 const input=createInput(()=>attack(state),id=>useSkill(state,id),()=>{
   if(state.questUI?.isOpen?.())return;
   if(resourceInteraction?.interact())return;
+  if(deliveryInteraction?.interact())return;
   npcInteraction?.interact();
 });
 debugToggle?.addEventListener('click',()=>{state.debug.hitboxes=!state.debug.hitboxes;debugToggle.setAttribute('aria-pressed',String(state.debug.hitboxes));debugToggle.textContent=state.debug.hitboxes?'DEBUG ON':'DEBUG'});
@@ -33,7 +36,7 @@ function updateCamera(){const z=state.zone;if(!z)return;state.cam.x=Math.max(0,M
 async function loadSkills(){const response=await fetch('../data/skills.json');if(!response.ok)throw new Error(`Skill data failed: ${response.status}`);state.player.skillsData=await response.json()}
 async function loadQuests(){const response=await fetch('../data/quests.json',{cache:'no-store'});if(!response.ok)throw new Error(`Quest data failed: ${response.status}`);const data=await response.json();state.questCatalog=data.quests||[];state.questManager=createQuestManager(state,state.questCatalog)}
 function renderFallback(message){if(!ctx)return;ctx.clearRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#6fa84a';ctx.fillRect(0,0,canvas.width,canvas.height);ctx.fillStyle='#fff';ctx.font='bold 18px system-ui';ctx.fillText('Arelia Online',18,28);if(message){ctx.font='13px system-ui';ctx.fillText(message,18,52)}}
-function updateInteractHint(){const resource=resourceInteraction?.update();const npc=npcInteraction?.update();if(interactHint){interactHint.hidden=!resource&&!npc;interactHint.textContent=resource?`กด E เพื่อเก็บ ${resource.node.type}`:npc?'กด E เพื่อคุยกับ NPC':' '}}
-async function start(){if(!canvas||!ctx)throw new Error('Game canvas unavailable');const loaded=await loadZone();state.zone=loaded.zone;state.error=loaded.error;state.player.x=state.zone.spawn.x;state.player.y=state.zone.spawn.y;state.player.spawnX=state.zone.spawn.x;state.player.spawnY=state.zone.spawn.y;state.assets=assets;updateCamera();state.decor=generateDecor(state);state.mobs=createMobs();npcInteraction=createNpcInteraction(state);resourceInteraction=createResourceInteraction(state);await Promise.all([loadSkills(),loadQuests()]);initQuestUI(state);requestAnimationFrame(loop);ready.catch(error=>{state.error=`Asset startup failed: ${error?.message||error}`;console.error(error)})}
+function updateInteractHint(){const resource=resourceInteraction?.update();const delivery=deliveryInteraction?.update();const npc=npcInteraction?.update();if(interactHint){interactHint.hidden=!resource&&!delivery&&!npc;interactHint.textContent=resource?`กด E เพื่อเก็บ ${resource.node.type}`:delivery?'กด E เพื่อส่งของ':npc?'กด E เพื่อคุยกับ NPC':' '}}
+async function start(){if(!canvas||!ctx)throw new Error('Game canvas unavailable');const loaded=await loadZone();state.zone=loaded.zone;state.error=loaded.error;state.player.x=state.zone.spawn.x;state.player.y=state.zone.spawn.y;state.player.spawnX=state.zone.spawn.x;state.player.spawnY=state.zone.spawn.y;state.assets=assets;updateCamera();state.decor=generateDecor(state);state.mobs=createMobs();npcInteraction=createNpcInteraction(state);resourceInteraction=createResourceInteraction(state);deliveryInteraction=createDeliveryInteraction(state);await Promise.all([loadSkills(),loadQuests()]);initQuestUI(state);requestAnimationFrame(loop);ready.catch(error=>{state.error=`Asset startup failed: ${error?.message||error}`;console.error(error)})}
 function loop(t){const dt=Math.min(.05,(t-last)/1000);last=t;try{move(state,input.keys,dt);updateCombat(state,dt);updateCamera();updateInteractHint();drawScene(ctx,state,assets);drawRoadOverlay(ctx,state);drawStructures(ctx,state);drawActorsOverlay(ctx,state,assets);updateHud(state);state.questUI?.render()}catch(error){state.error=`Render error: ${error?.message||error}`;console.error(error);renderFallback(state.error)}requestAnimationFrame(loop)}
 start().catch(error=>{state.error=`Startup failed: ${error?.message||error}`;console.error(error);renderFallback(state.error);requestAnimationFrame(loop)});
