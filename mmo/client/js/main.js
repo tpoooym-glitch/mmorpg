@@ -12,7 +12,7 @@ import {initCraftingUI} from './ui/crafting-ui.js';
 import {createCraftingInteraction} from './crafting/crafting-interaction.js';
 import {createMobs} from './entities/mob-factory.js?v=20260914-1';
 import {move} from './systems/movement-system.js';
-import {attack,useSkill,updateCombat} from './systems/combat-system.js?v=20260915-2';
+import {attack,useSkill,updateCombat} from './systems/combat-system-v3.js?v=20260915-1';
 import {loadAssets} from './render/asset-loader.js';
 import {drawScene} from './render/canvas-renderer.js?v=20260914-3';
 import {drawRoadOverlay} from './render/road-overlay.js?v=20260914-3';
