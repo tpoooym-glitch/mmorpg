@@ -4,32 +4,11 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>Arelia Online</title>
-<link rel="stylesheet" href="css/style.css?v=20260915-quest2">
+<link rel="stylesheet" href="css/style.css?v=20260915-quest3">
 </head>
-<body>
-<div id="app">
-<header><b>ARELIA ONLINE</b><span id="connection">● Offline</span></header>
-<main>
-<canvas id="game" width="1100" height="680"></canvas>
-<button id="debug-toggle" type="button" aria-pressed="false">DEBUG</button>
-<aside id="hud">
-<div id="character">Adventurer · Warrior</div>
-<div class="status-row"><span>HP</span><span id="hp">140/140</span></div><div class="bar"><i id="hpbar"></i></div>
-<div class="status-row"><span>MP</span><span id="mp">70/70</span></div><div class="bar"><i id="mpbar"></i></div>
-<div class="status-row"><span id="level">Lv.1</span><span>Gold <b id="gold">100</b></span></div>
-<div class="xp-label">EXP <span id="xp">0/100</span></div><div class="bar xp"><i id="xpbar"></i></div>
-<div id="skills-title">SKILLS</div><div id="skills"><div id="skill-slash" class="skill"><b>1</b><span>Slash</span><em id="cooldown-slash">READY</em></div><div id="skill-guard" class="skill"><b>2</b><span>Guard</span><em id="cooldown-guard">READY</em></div></div>
-<button id="quest-open" type="button">QUESTS <kbd>Q</kbd></button>
-</aside>
-<section id="quest-panel" hidden>
-<div class="quest-header"><div><strong>QUESTS</strong><span id="quest-npc-title">Mira · Quest NPC</span></div><button id="quest-close" type="button">×</button></div>
-<div class="quest-columns"><div><h3>เควสต์ที่รับอยู่ <small>สูงสุด 5</small></h3><div id="quest-list"></div></div><div><h3>เควสต์จาก NPC <small>Repeatable</small></h3><div id="quest-catalog"></div></div></div>
-<div class="quest-hint">Q เปิด/ปิดหน้าต่าง · รับเควสต์จาก NPC · ทำตามเป้าหมาย · กลับ NPC เดิมเพื่อส่ง</div>
-</section>
-<div id="death-message" hidden>DEFEATED · กลับจุดเกิดในอีกไม่นาน</div>
-<div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1 Slash · 2 Guard · Q Quest</div>
-<div id="boot-error" hidden></div>
-</main></div>
-<script>window.addEventListener('error',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.message||'Unknown error')});window.addEventListener('unhandledrejection',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.reason?.message||e.reason||'Unhandled promise rejection')});</script>
-<script type="module" src="js/main.js?v=20260915-quest2"></script>
-</body></html>
+<body><div id="app"><header><b>ARELIA ONLINE</b><span id="connection">● Offline</span></header><main>
+<canvas id="game" width="1100" height="680"></canvas><button id="debug-toggle" type="button" aria-pressed="false">DEBUG</button>
+<aside id="hud"><div id="character">Adventurer · Warrior</div><div class="status-row"><span>HP</span><span id="hp">140/140</span></div><div class="bar"><i id="hpbar"></i></div><div class="status-row"><span>MP</span><span id="mp">70/70</span></div><div class="bar"><i id="mpbar"></i></div><div class="status-row"><span id="level">Lv.1</span><span>Gold <b id="gold">100</b></span></div><div class="xp-label">EXP <span id="xp">0/100</span></div><div class="bar xp"><i id="xpbar"></i></div><div id="skills-title">SKILLS</div><div id="skills"><div id="skill-slash" class="skill"><b>1</b><span>Slash</span><em id="cooldown-slash">READY</em></div><div id="skill-guard" class="skill"><b>2</b><span>Guard</span><em id="cooldown-guard">READY</em></div></div><button id="quest-open" type="button">QUESTS <kbd>Q</kbd></button></aside>
+<section id="quest-panel" hidden><div class="quest-header"><div><strong>QUESTS</strong><span id="quest-npc-title">Mira · Quest NPC</span></div><button id="quest-close" type="button">×</button></div><div class="quest-columns"><div><h3>เควสต์ที่รับอยู่ <small>สูงสุด 5</small></h3><div id="quest-list"></div></div><div><h3>เควสต์จาก NPC <small>Repeatable</small></h3><div id="quest-catalog"></div></div></div><div class="quest-hint">Q เปิด/ปิดหน้าต่าง · เดินเข้าใกล้ NPC แล้วกด E เพื่อคุย · กลับ NPC เดิมเพื่อส่ง</div></section>
+<div id="npc-interact" hidden></div><div id="death-message" hidden>DEFEATED · กลับจุดเกิดในอีกไม่นาน</div><div id="help">WASD/ลูกศร เดิน · SPACE โจมตี · 1 Slash · 2 Guard · E คุย NPC · Q Quest</div><div id="boot-error" hidden></div></main></div>
+<script>window.addEventListener('error',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.message||'Unknown error')});window.addEventListener('unhandledrejection',e=>{const box=document.getElementById('boot-error');if(!box)return;box.hidden=false;box.textContent='Game error: '+(e.reason?.message||e.reason||'Unhandled promise rejection')});</script><script type="module" src="js/main.js?v=20260915-quest3"></script></body></html>
