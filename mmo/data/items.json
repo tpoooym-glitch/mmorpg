@@ -2,5 +2,12 @@
   "potion-small":{"name":"Small Potion","type":"consumable","stack":20,"buyPrice":15,"sellPrice":7,"effect":{"hp":30}},
   "ether-small":{"name":"Small Ether","type":"consumable","stack":20,"buyPrice":20,"sellPrice":10,"effect":{"mp":20}},
   "iron-sword":{"name":"Iron Sword","type":"weapon","slot":"weapon","buyPrice":100,"sellPrice":50,"stats":{"attack":8}},
-  "leather-armor":{"name":"Leather Armor","type":"armor","slot":"armor","buyPrice":80,"sellPrice":40,"stats":{"defense":4}}
+  "leather-armor":{"name":"Leather Armor","type":"armor","slot":"armor","buyPrice":80,"sellPrice":40,"stats":{"defense":4}},
+  "iron-ore":{"name":"Iron Ore","type":"material","stack":50,"sellPrice":8},
+  "slime-gel":{"name":"Slime Gel","type":"material","stack":50,"sellPrice":5},
+  "healing-herb":{"name":"Healing Herb","type":"material","stack":50,"sellPrice":6},
+  "rare-herb":{"name":"Rare Herb","type":"material","stack":30,"sellPrice":20},
+  "iron-dagger":{"name":"Iron Dagger","type":"weapon","slot":"weapon","buyPrice":140,"sellPrice":70,"stats":{"attack":12}},
+  "craft-token":{"name":"Craft Token","type":"quest","stack":10,"sellPrice":0},
+  "travel-bread":{"name":"Travel Bread","type":"consumable","stack":10,"sellPrice":4}
 }
