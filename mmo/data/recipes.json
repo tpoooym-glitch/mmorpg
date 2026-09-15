@@ -1,0 +1,8 @@
+{
+  "version":1,
+  "recipes":[
+    {"id":"iron-dagger","name":"Iron Dagger","station":"blacksmith","ingredients":[{"id":"iron-ore","qty":2},{"id":"slime-gel","qty":1}],"output":{"id":"iron-dagger","qty":1}},
+    {"id":"small-potion","name":"Small Potion","station":"blacksmith","ingredients":[{"id":"healing-herb","qty":2},{"id":"slime-gel","qty":1}],"output":{"id":"potion-small","qty":1}},
+    {"id":"travel-bread","name":"Travel Bread","station":"blacksmith","ingredients":[{"id":"wheat","qty":2}],"output":{"id":"travel-bread","qty":1}}
+  ]
+}
