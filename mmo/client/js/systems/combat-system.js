@@ -13,7 +13,9 @@ function rewardPlayer(state,mob){
   while(state.player.xp>=100){state.player.xp-=100;state.player.level++;state.player.maxHp+=10;state.player.maxMp+=5;state.player.hp=state.player.maxHp;state.player.mp=state.player.maxMp}
 }
 function findAttackTarget(state,range=state.player.attackRange){const p=state.player;let target=null,best=Infinity;for(const m of state.mobs){if(!m.alive||m.hp<=0)continue;const d=dist(m.x,m.y,p.x,p.y);if(d<=range+m.r&&d<best){best=d;target=m}}return target}
-function applyDamage(state,target,rawDamage){if(!target||!target.alive||target.hp<=0)return false;const damage=Math.max(1,Math.floor(rawDamage)-(target.defense||0));target.hp=Math.max(0,target.hp-damage);if(target.hp===0){target.alive=false;target.respawnAt=performance.now()+target.respawnMs;rewardPlayer(state,target)}return true}
+function questTargetName(mob){return String(mob.questTarget||mob.type||mob.kind||'').toLowerCase()}
+function notifyQuestKill(state,mob){const qm=state.questManager;if(!qm||!mob)return;const target=questTargetName(mob);qm.progress('kill',target,1)}
+function applyDamage(state,target,rawDamage){if(!target||!target.alive||target.hp<=0)return false;const damage=Math.max(1,Math.floor(rawDamage)-(target.defense||0));target.hp=Math.max(0,target.hp-damage);if(target.hp===0){target.alive=false;target.respawnAt=performance.now()+target.respawnMs;rewardPlayer(state,target);notifyQuestKill(state,target)}return true}
 function applyAttackHit(state,target){return applyDamage(state,target,state.player.attackDamage)}
 
 export function attack(state){const p=state.player;if(p.dead||p.attackCooldown>0||p.attackAnimating)return false;p.attackCooldown=HIT_COOLDOWN;p.attackAnimating=true;p.attackFrame=0;p.attackElapsed=0;p.attackHitCount=0;p.attackTarget=findAttackTarget(state);return true}
