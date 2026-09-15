@@ -1,4 +1,5 @@
 {
-  "elder-mira":{"name":"Mira","type":"quest","dialogue":["Welcome to Emerald Vales.","I may have work for an adventurer."],"questIds":["slime-cleanup"]},
-  "merchant-elin":{"name":"Elin","type":"shop","dialogue":["Take a look at my supplies."],"shopId":"village-shop"}
+  "elder-mira":{"name":"Mira","type":"quest","dialogue":["Welcome to Emerald Vales.","I may have work for an adventurer."],"questIds":["slime-cleanup","goblin-hunt","wolf-patrol","herb-gathering","village-delivery","ore-collection","basic-crafting","forest-champion","elite-boar","rare-herb-order"]},
+  "merchant-elin":{"name":"Elin","type":"shop","dialogue":["Take a look at my supplies."],"shopId":"village-shop"},
+  "blacksmith-roen":{"name":"Roen","type":"craft","dialogue":["Bring me materials and I can craft useful gear."],"questIds":["basic-crafting"]}
 }
