@@ -3,7 +3,7 @@ import {createInput} from './input/input-manager.js';
 import {loadZone} from './world/map-loader.js';
 import {generateDecor} from './world/decor-generator.js';
 import {createQuestManager} from './quest/quest-manager.js?v=20260915-3';
-import {initQuestUI} from './ui/quest-ui.js?v=20260915-3';
+import {initQuestUI} from './ui/quest-ui-v3.js?v=20260915-1';
 import {createNpcInteraction} from './npc/npc-interaction.js?v=20260915-1';
 import {createMobs} from './entities/mob-factory.js?v=20260914-1';
 import {move} from './systems/movement-system.js';
