@@ -1,0 +1,39 @@
+# OS files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors
+.vscode/
+.idea/
+
+# Dependencies
+node_modules/
+
+# Build / cache output
+dist/
+build/
+coverage/
+.cache/
+.parcel-cache/
+.vite/
+
+# Temporary files
+*.tmp
+*.temp
+*.swp
+*.swo
+*.log
+
+# Archives and extracted artifacts
+*.zip
+*.tar
+*.tar.gz
+*.7z
+UT/
+**/UT/
+
+# Local environment
+.env
+.env.*
+!.env.example
